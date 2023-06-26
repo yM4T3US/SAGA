@@ -17,6 +17,8 @@ class User(AbstractUser, PermissionsMixin):
     password = models.CharField(max_length=100)
     phone = models.CharField(max_length=16)
     professor = models.BooleanField(default=False)
+    profile_image = models.ImageField(null=True, blank=True, upload_to='images/')
+
 
     objects = UserManager()
     

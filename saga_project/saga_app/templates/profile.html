@@ -16,6 +16,16 @@
               {% csrf_token %}   
               <div class="row justify-content-center">
               <h2 class="mb-3 mt-sm-3 text-center">Alterar Perfil</h2>
+              <div class="text-center mb-3">
+                {% if user.profile_image %} 
+                <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
+                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
+                  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
+                </svg>
+                {% else %}
+                <img src="{{ user.profile_image.url }}" class="rounded-4" alt="" style="width: 300px; position: relative;">
+                {% endif %}
+              </div>
               <div class="col-sm-5 pe-lg-2">
                 <div class="form-floating mb-3">
                   <input type="text" name="first-name" class="form-control" id="floatingInput" value="{{user.first_name}}" disabled>

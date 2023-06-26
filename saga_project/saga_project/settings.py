@@ -125,7 +125,6 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ROLEPERMISSIONS_MOULE = 'saga_app.roles'
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_FROM_USER = 'mateusjassppir@gmail.com'
 EMAIL_HOST = 'smtp.gmail.com'
