@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'head' %}
+    <link rel="stylesheet" href="{% static 'general/css/base.css' %}">
+    <style>
+    
+        p {
+          color: white;
+          text-align: justify;
+          line-height: 1.5;
+        }
+
+
+      </style>
+{% endblock %}
+
+{% block 'dinamic-content' %}
+
+    <main>
+        <div class="container rounded-5" style="margin-top: 3vh; background-color: #0CA12F">
+            <div class="row justify-content-center p-3">
+                <h1 class="text-center">- Sobre nós -</h1>
+                <article class="mt-3">
+                    <p>Bem-vindo ao nosso projeto de agendamento de horários para alunos e professores! Somos uma equipe dedicada, composta por eu e meu colega, que está comprometida em facilitar a comunicação e organização entre estudantes e educadores.</p>
+
+                    <p>Nosso projeto é desenvolvido utilizando Django, um framework de alto desempenho e fácil implementação. Acreditamos que a tecnologia tem o poder de transformar a forma como aprendemos e ensinamos, e é por isso que nos dedicamos a criar uma solução eficiente e intuitiva para a marcação de horários.</p>
+
+                    <p>Sabemos que a tarefa de agendar horários entre alunos e professores pode ser complicada e demorada. Por isso, nosso objetivo é simplificar esse processo, proporcionando uma plataforma amigável e de fácil utilização para ambas as partes envolvidas.</p>
+
+                    <p>Com nosso sistema de agendamento, os alunos terão a comodidade de escolher os horários disponíveis dos professores de forma rápida e prática. E, ao mesmo tempo, os professores poderão gerenciar suas agendas de maneira eficiente, evitando conflitos e garantindo uma melhor organização de seu tempo.</p>
+
+                    <p>Além disso, nosso projeto também oferece recursos adicionais, como notificações por e-mail para lembretes de compromissos agendados, histórico de agendamentos anteriores e a possibilidade de reagendar ou cancelar horários de maneira simples.</p>
+
+                    <p>Estamos comprometidos em criar uma experiência positiva para todos os usuários do nosso projeto. Por isso, valorizamos o feedback e as sugestões da comunidade acadêmica, pois acreditamos que isso nos ajudará a aprimorar constantemente nosso sistema e atender às necessidades específicas de cada instituição educacional.</p>
+
+                    <p>Agradecemos pela oportunidade de apresentar nosso projeto e convidamos você a experimentar nossa plataforma de agendamento. Juntos, podemos transformar a forma como horários são marcados e contribuir para um ambiente educacional mais organizado e produtivo.</p>
+
+                    <p>Se tiver alguma dúvida ou precisar de suporte, não hesite em entrar em contato conosco. Estamos aqui para ajudar!</p>
+
+                    <p>Atenciosamente,<br>
+                    Rafael Borille<br>
+                    Mateus Almeida</p>
+                    
+                    
+                </article>
+                <!--<div class="d-float justify-content-center mt-3">
+                    <img src="{% static 'general/img/logo-IFRS2.png' %}" class="mr-3 rounded float-start" alt="Logo 1" style="position: relative">
+                    <img src="{% static 'general/img/logo-IFRS2.png' %}" class="rounded float-end" alt="Logo 2" style="position: relative">
+                </div>-->
+            </div>
+        </div>
+    </main>
+
+{% endblock %}

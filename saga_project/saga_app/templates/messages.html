@@ -1,0 +1,26 @@
+{% if messages %}
+{% for message in messages %}
+<div id='message' class="container-fluid p-0">
+  <div class="alert {{ message.tags }} alert alert-success alert-dismissible" role="alert" >
+    <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+    </button>
+    {{ message }}
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+{% block 'message-scripts' %}
+<script>
+    // Obtenha a referência ao elemento da mensagem
+    var messageElement = document.getElementById("message");
+    console.log(messageElement)
+    // Defina a duração desejada em milissegundos (por exemplo, 5 segundos)
+    var duration = 5000;
+  
+    // Remova a classe 'show' da mensagem após a duração especificada
+    setTimeout(function() {
+      messageElement.hidden = true;
+    }, duration);
+  </script>
+{% endblock %}
+

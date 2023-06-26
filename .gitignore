@@ -1,0 +1,16 @@
+# Arquivos e diretórios específicos do Django
+*.pyc
+__pycache__/
+mysite/settings/local.py
+db.sqlite3
+media/
+migrations/
+
+# Ambiente virtual (se estiver usando um)
+venv/
+
+# Arquivos de configuração sensíveis
+saga_project/settings/secret_key.py
+
+#Outros
+saga_project.rar

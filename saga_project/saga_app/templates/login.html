@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'head' %}
+{% endblock %}
+
+{% block 'configuracoes' %}
+{% endblock %}
+
+
+
+{% block 'dinamic-content' %}
+<section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="rounded-4 container">
+    <div class="container-xl">
+        <div class="row align-items-center">
+          <div class="text-center col-xl-12 col-xl-12 mb-3">
+              <h1 class="display-1 fw-bold";><strong>SAGA</strong></h1>
+              <p>Sistema Acadêmico de Gerenciamento de Atendimentos</p>
+          </div>
+          <div class="col-xl-12 col-xl-6">
+            <h3 class="mb-3 text-center">Login</h3>
+            <form action="{% url 'login' %}" method="POST">
+              {% csrf_token %}
+              <div class="row justify-content-center">
+                <div class="col-sm-6">
+                  <div class="form-floating mb-3">
+                    <input type="email" class="form-control autocomplete" id="floating-input-email" name="email" placeholder="name@example.com" autocomplete="off">
+                    <label for="floatingInput"><span style="color: #999999;">E-mail</span></label>
+                  </div>
+                </div>
+                <div></div>
+                <div class="col-sm-6">
+                  <div class="form-floating">
+                    <input type="password" class="form-control autocomplete" id="floating-input-password" name="password" placeholder="Password" autocomplete="off">
+                    <label for="floatingPassword"><span style="color: #999999;">Senha</span></label>
+                </div>
+                <button type="submit" class="btn mt-3 w-100" style="background-color: #00510F; color: white;">Entrar</button>
+                <div class="container">
+                  <div class="row mt-3 align-items-center">
+                    <div class="col-6 ps-0">
+                      <a style="color: white; text-align: right; text-decoration: none;" href="{% url 'signup' %}" class="col p-0 text-right m-0">Não tenho uma conta</a> 
+                    </div>
+                    <div class="col-6 form-check d-flex justify-content-end p-0"> 
+                      <input type="checkbox" class="form-check-input" id="checkbox-remember-me" onchange="toggleAutocomplete()">
+                      <label class="form-check-label ms-1" for="exampleCheck1">Lembre-me</label>
+                    </div>
+                    </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+    </div>
+{% endblock %}
+{% block 'scripts' %}
+<script>
+  function toggleAutocomplete() {
+    var email = document.getElementById("floating-input-email");
+    var password = document.getElementById("floating-input-password")
+    var autocompleteCheckbox = document.getElementById("checkbox-remember-me");
+
+
+    if (autocompleteCheckbox.checked) {
+      email.autocomplete = 'email'
+      password.autocomplete = 'current-password'
+    }
+
+    else {
+      email.autocomplete = 'off'
+      password.autocomplete = 'off'
+    }
+    
+
+    
+    
+  }
+</script>
+{% endblock %}

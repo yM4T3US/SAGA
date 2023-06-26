@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'head' %}
+{% block 'css' %}
+<link rel='stylesheet' href="{% static 'general/css/discipline-register.css' %}">
+{% endblock %}
+{% endblock %}
+
+{% block 'dinamic-content' %}
+    <main>
+        <section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="container mt-md-5">
+          {% include 'messages.html' %}
+          <form action="{% url 'add-discipline' %}" method="post">
+      
+            {% csrf_token %}
+            <div class="container">
+              <h1 class="text-center">Adicionar Disciplina</h1>
+              <div>
+                <div class="row">
+                  <div class="col-md-12" id="first-name">
+                    <label for="inputFirstName" class="form-label">Nome da disciplina</label>
+                    <input style="--bs-bg-opacity: 0.1;" type="text" id="discipline-name" class="form-control"
+                      name="discipline-name" autocomplete="off">
+                  </div>
+                  <div class="col-md-12">
+                    <label for="inputPassword1" class="form-label mt-2">Chave de acesso</label>
+                    <input type="password" class="form-control" id="access-key" name="access-key">
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-2" id="first-name">
+                    <label for="inputFirstName" class="form-label mt-2">Semestre</label>
+                    <select class="form-select" name="semester" aria-label="Default select example">
+                      <option selected>Selecionar</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                    </select>
+                  </div>
+                </div>
+                <label>Cursos</label>
+                <table class="table table-striped table-hover table-bordered table-light mt-3" id="discipline-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Id</th>
+                      <th scope="col">Cursos</th>
+                      <th scope="col">Selecionado</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for course in courses %}
+                    <tr>
+                      <td>{{course.id}}</td>
+                      <td>{{course.name }}</td>
+                      <td>
+                        <div class="form-check">
+                          <input type="checkbox" class="form-check-input" name="boxes" value="{{course.id}}">
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-3 m-auto">
+              <button type="submit" class="btn mt-3 w-100"
+                style="background-color: #00510F; color: white;" id="send">Cadastrar</button>
+            </div>
+            </div>
+          </form>
+      
+        </section>
+      </main>
+
+  </section>
+</main>
+{% endblock %}

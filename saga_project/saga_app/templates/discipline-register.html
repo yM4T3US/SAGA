@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'head' %}
+  {% block 'css' %}
+    <link rel='stylesheet' href="{% static 'general/css/discipline-register.css' %}">
+  {% endblock %}
+{% endblock %}
+
+{% block 'dinamic-content' %}
+<main>
+  <section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="container mt-md-5">
+      {% include 'messages.html' %}
+      <div class="container">
+        <h1 class="text-center">Disciplina</h1>
+        <div>
+          <table class="table table-striped table-hover table-bordered table-light mt-3" id="discipline-table">
+            <div class="d-grid gap-2 d-md-block text-end">
+              <a href="{% url 'add-discipline' %}"><button class="btn btn-primary" type="button">Adicionar</button></a>
+            </div>
+            <thead>
+              <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Disciplinas</th>
+                <th scope="col">Selecionado</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for discipline in disciplines %}
+              <tr id="elemento-{{ discipline.id }}">
+                <td>{{discipline.id}}</td>
+                <td>{{discipline}}</td>
+                <td>
+                  <div class="row justify-content-center">
+                    <div class="col-6 text-end">
+                        <a href="{% url 'discipline-update-get' discipline.id %}"><button type="button" class="btn bg-success" style="color: white">Editar</button></a>
+                    </div>
+                    <div class="col-6 text-start">
+                      <form action="{% url 'discipline-delete' discipline.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="btn bg-danger btn-delete" style="color: white">Excluir</button>
+                      </form>
+                      <form action="{% url 'availability' %}" method="POST">
+                        {% csrf_token %}
+                        <input type="hidden" class="form-check-input" name="disciplina_id" value="{{discipline.id}}">
+                        <input type="hidden" class="form-check-input" name="register_availability" value="0">
+                        <button type="submit" class="btn" style="background-color: #00510F; color: white; margin-right: 0;">Selecionar</button>
+                      </form>
+                    </div>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table> 
+        </div>
+      </div>
+      </div>
+  
+  </section>
+</main>
+{% endblock %}
+{% block 'scripts' %}
+<script>
+  $(document).ready(function() {
+    $('#discipline-table').DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 10,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registos",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+
+
+  });
+</script>
+{% endblock %}

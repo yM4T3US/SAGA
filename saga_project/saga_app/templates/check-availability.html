@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% load static %}
+{% block 'head' %}
+{% endblock %}
+{% block 'dinamic-content' %}
+<h1 class="text-center mt-3">Agendas da disciplina de {{discipline.name}}</h1>
+<div class="container" style="margin-top: 5vh;">
+  <div id="calendar" data-student-id="{{ id }}" data-username="{{ first_name }}" data-discipline="{{ discipline.id }}" class="pb-5"></div>
+</div>
+
+{% endblock %}
+{% block 'scripts' %}
+
+
+<script>
+
+  $(document).ready(function () {
+    
+    
+    var tableData;
+    var discipline = $('#calendar').data('discipline')
+    var studentId = $('#calendar').data('student-id')
+    var studentName = $('#calendar').data('username')
+
+    const monthNames = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+    $.ajax(
+      {
+        url: '/send-availability-to-students/' + discipline,
+        method: 'GET',
+        dataType: 'json',
+        success: function (data) {
+          tableData = data;
+          var buttonSelector = '.show-modal';
+
+          $('#calendar').evoCalendar({
+            theme: 'Midnight Blue',
+            language: 'pt',
+            calendarEvents: []
+          });
+
+          for (var i = 0; i < tableData.length; i++) {
+            const date = new Date(tableData[i].date);
+
+
+            var event = {
+              id: tableData[i].id,
+              name: `${tableData[i].initial_time} - ${tableData[i].final_time}`,
+              date: `${monthNames[date.getMonth()]}/${String(date.getDate() + 1).padStart(2, '0')}/${String(date.getFullYear())}`,
+              badge: tableData[i].status == false ? "Agendar horário" : "Cancelar",
+              description: (function() {
+                if (tableData[i].status === false) {
+                  return ""
+                } else if (tableData[i].student_id == studentId) {
+                  return `Agendado por:  ${studentName}`
+                } else {
+                  return `Agendado por: ID = ${tableData[i].student_id}`
+                }
+              })(),
+              /*description: tableData[i].status == false ? " " : `Agendado por: ${tableData[i].student_id}`,//`Agendado por: \n ${$('#calendar').data('username')}`,*/
+              type: tableData[i].status == false ? "holiday" : "event",
+              everyYear: false,
+              status: tableData[i].status
+            };
+
+            /*console.log(`${monthNames[date.getMonth()]}/${String(date.getDate() + 1).padStart(2, '0')}/${String(date.getFullYear())}`)*/
+            $('#calendar').evoCalendar('addCalendarEvent', [event]);
+          };
+
+          /*function handleClick() {
+            // Código a ser executado quando um botão for clicado
+            console.log('Botão clicado!');
+          }
+
+          $(document).on('click', buttonSelector, handleClick());*/
+
+        },
+        error: function (error) {
+          console.error('Erro na requisição:', error);
+        }
+
+      },
+    )
+  })
+</script>
+<script>
+  $(document).ready(function() {
+    const parentElement = $('#calendar');
+    
+    parentElement.on('click', '.get-username', function() {
+      // Lógica que será executada quando um botão for clicado
+
+      const text = $('#calendar').data('username');
+      const studentId = $("#calendar").data('student-id');
+      const scheduleId = $(this).attr('id');
+      
+
+      // Encontra a div pai correspondente usando closest()
+      const divPai = $(this).closest('.event-container');
+
+      // Encontra o elemento dentro da div pai onde você deseja adicionar o texto usando find()
+      const elementoTexto = divPai.find('.event-desc');
+
+      // Adiciona o texto ao elemento encontrado
+      
+      const badge = divPai.find('.get-username');
+      
+      
+
+      if (/*$(this).data('scheduled') === undefined ||*/ $(this).data('scheduled') === false) {
+        const bulletElement = divPai.find('.event-bullet-holiday');
+        
+
+        var linha1 = $('<div>').text('Agendado por: ' +text);
+        
+
+        elementoTexto.append(linha1);
+        bulletElement.removeClass('event-bullet-holiday');
+        bulletElement.addClass('event-bullet-event');
+        badge.text("Cancelar");
+        $(this).data('scheduled', true);
+        $(this).data('student-id', studentId)
+
+    } else {
+        const bulletElement = divPai.find('.event-bullet-event');
+        elementoTexto.text(' ');
+        bulletElement.removeClass('event-bullet-event');
+        bulletElement.addClass('event-bullet-holiday');
+        badge.text("Agendar horário");
+        $(this).data('scheduled', false);
+    }
+
+      var eventId = $(this).closest('.event-container').attr('id');
+
+    function updateScheduledTime(scheduled, scheduleId, studentId) {
+      console.log(scheduled)
+      $.ajax({
+        type: 'POST',
+        url: '/update-scheduled-time/',
+        data: {
+          'scheduled': scheduled,
+          'schedule_id': scheduleId,
+          'student_id': studentId 
+        },
+        success: function(data) {
+          console.log("Horário atualizado com sucesso!");
+        }, 
+        error: function() {
+          console.log("Ocorreu um erro ao atualizar o horário.")
+        }
+      })
+    }
+
+
+    updateScheduledTime($(this).data('scheduled'), scheduleId, studentId);
+
+
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'head' %}
+  {% block 'css' %}
+    <link rel='stylesheet' href="{% static 'general/css/discipline-register.css' %}">
+  {% endblock %}
+{% endblock %}
+
+{% block 'dinamic-content' %}
+<main>
+  <section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="container mt-md-5">
+    <!--<form action="{% url 'availability' %}" method="POST">-->
+
+      <div class="container">
+        <h1 class="text-center">Disciplinas do curso: {{course.name}}</h1>
+        <h4 class="text-center">Selecione a disciplina para cadastrar a disponibilidade</h4>
+        <div>
+          <table class="table table-striped table-hover table-bordered table-light mt-3" id="discipline-table">
+            <thead>
+              <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Disciplinas</th>
+                <th scope="col">Ano</th>
+                <th scope="col">Semestre</th>
+                <th scope="col">Selecionar</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for discipline in disciplines %}
+                  <tr>
+                    <td>{{discipline.id}}</td>
+                    <td>{{discipline}}</td>
+                    <td>{{discipline.year}}</td>
+                    <td>{{discipline.semester}}</td>
+                    <td>
+                        <form action="{% url 'availability' %}" method="post">
+                          {% csrf_token %}
+                        <input type="hidden" class="form-check-input" name="disciplina_id" value="{{discipline.id}}">
+                        <input type="hidden" class="form-check-input" name="register_availability" value="0">
+                        <button type="submit" class="btn" style="background-color: #00510F; color: white; margin-right: 0;">Selecionar</button>
+                        </form> 
+                    </td>
+                  </tr>      
+              {% endfor %}
+            </tbody>
+          </table> 
+        </div>
+      </div>
+
+      </div>
+    <!--</form>-->
+
+  </section>
+</main>
+{% endblock %}
+{% block 'scripts' %}
+<script>
+  $(document).ready(function() {
+    $('#discipline-table').DataTable({
+        responsive: true,
+        // "bSort": false,
+        "aaSorting": [],
+        "pageLength": 10,
+        "language": {
+            "decimal": "",
+            "emptyTable": "Sem dados disponíveis",
+            "info": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "infoEmpty": "Mostrando de 0 até 0 de 0 registos",
+            "infoFiltered": "(filtrado de _MAX_ registros no total)",
+            "infoPostFix": "",
+            "thousands": ",",
+            "lengthMenu": "Mostrar _MENU_ registros",
+            "loadingRecords": "A carregar dados...",
+            "processing": "A processar...",
+            "search": "Procurar:",
+            "zeroRecords": "Não foram encontrados resultados",
+            "paginate": {
+                "first": "Primeiro",
+                "last": "Último",
+                "next": "Seguinte",
+                "previous": "Anterior"
+            },
+            "aria": {
+                "sortAscending": ": ordem crescente",
+                "sortDescending": ": ordem decrescente"
+            }
+        }
+    });
+  });
+</script>
+{% endblock %}

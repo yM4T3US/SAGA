@@ -1,0 +1,167 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Play:wght@700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,600;1,700&family=Roboto:wght@900&display=swap');
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+}
+
+#navbar {
+    background-image: linear-gradient(to right, #57EB7A , #0CA12F);
+    height: 15vh;
+}
+
+img {
+  position: absolute;
+  top: 0;
+  margin: 1%
+}
+
+body {
+  background-image: linear-gradient(to bottom, #5FFF84, #0CA12F); 
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+
+#display-login {
+  background-color: #0ca12f2b;
+  padding: 50px;
+  color: white;
+  margin: 10vh auto;
+  font-family: "Roboto", sans-serif;
+}
+
+h1 {
+  color: white;
+    text-shadow: 
+    -10px -10px 0px #0000,
+    -10px 10px 0px #0000,
+    2px -1px 0px #000,
+    1px 0px 0px #000;
+}
+
+
+.section div {
+  margin: auto;
+}
+
+.main-info h2 {
+  font-family: "Roboto", sans-serif;
+}
+
+
+#checkbox-remember-me:hover {
+  cursor: pointer;
+}
+
+#dropdown-menu[data-bs-popper] {
+  left: -130px;
+  margin-top: .125rem;
+}
+ 
+.navbar {
+color: white;
+}
+
+.nav-link {
+color: white;
+}
+
+.navbar-light .navbar-toggler-icon {
+  background-image: url("data:image/svg+xml;..");
+}
+
+.card img {
+  position: relative; 
+  width: 100%; 
+  height: 144px; 
+  object-fit: cover;
+}
+
+@media all and (min-width: 992px) {
+
+  .dropdown-menu li {
+      position: relative;
+  }
+
+  .dropdown-menu .submenu {
+      display: none;
+      position: absolute;
+      left: 100%;
+      top: -7px;
+  }
+
+  .dropdown-menu .submenu-left {
+      right: 100%;
+      left: auto;
+  }
+
+  .dropdown-menu>li:hover {
+      background-color: #f1f1f1
+  }
+
+  .dropdown-menu>li:hover>.submenu {
+      display: block;
+  }
+}
+
+/* ============ desktop view .end// ============ */
+
+/* ============ small devices ============ */
+@media (max-width: 991px) {
+
+  .dropdown-menu .dropdown-menu {
+      margin-left: 0.7rem;
+      margin-right: 0.7rem;
+      margin-bottom: .5rem;
+  }
+
+}
+
+
+
+.kanban {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  min-height: 400px;
+  gap: 10px;
+  padding: 13px;
+  background-color: transparent;
+}
+
+.column-full {
+  background-color: #0CA12F;
+  border-radius: 5px;
+  padding: 10px;
+  height: 30vh;
+  overflow-y: scroll;
+  
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+  
+  
+  
+}
+
+.item {
+  color: #000;
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.dragging {
+  opacity: 0.5;
+}
+
+input {
+  outline: none;
+}
+

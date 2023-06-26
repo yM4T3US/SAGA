@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'head' %}
+{% block 'css' %}
+<style>
+  .time-picker-container,
+  .time-picker-container-2 {
+    position: relative;
+  }
+
+  .time-picker,
+  .time-picker-2 {
+    position: relative;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    border-radius: 6px;
+  }
+
+  .time-picker__select {
+    appearance: none;
+    outline: none;
+    text-align: center;
+    border: 1px solid #dddddd;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .modal-body {
+    height: 350px;
+  }
+</style>
+{% endblock %}
+{% endblock %}
+
+{% block 'dinamic-content' %}
+<section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="rounded-4 container">
+    <div class="container">
+      <form action="{% url 'availability' %}" method="POST" class="row justify-content-center g-3">
+        <h1 class="text-center">Cadastrar Disponibilidade</h1>
+        {% csrf_token %}
+        <div class="row col-5 justify-content-center g-2">
+            <div class="col-12">
+              <label for="inputAddress" class="form-label">Data e hora iniciais:</label>
+              <input id="init-datetime" name="initial-datetime" type="datetime-local" class="form-control" id="inputAddress"
+                placeholder="1234 Main St">
+            </div>
+            <div class="col-12">
+              <label for="inputAddress2" class="form-label">Data e hora finais:</label>
+              <input id="final-datetime" name="final-datetime" type="datetime-local" class="form-control" id="inputAddress2"
+                placeholder="Apartment, studio, or floor">
+            </div>
+            <div class="text-center my-3 text-danger">
+              <strong id="message"></strong>
+            </div>
+            <div class="col-12 mb-3">
+              <label for="inputState" class="form-label">Duração: <small>(Entre cada atendimento)</small></label>
+              <select name="duration" id="inputState" class="form-select">
+                <option selected>Selecionar...</option>
+                <option value="15">15 min</option>
+                <option value="30">30 min</option>
+                <option value="45">45 min</option>
+                <option value="60">60 min</option>
+              </select>
+            </div>
+            <div class="row col-12 align-items-center">
+              <div class="col-12 mb-3">
+                <label for="" class="form-label">Dia da semana: <br><small>(Escolha 1 ou mais dias)</small></label>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="0" name="selected-days" id="flexCheckDefault">
+                  <label class="form-check-label" for="flexCheckDefault">
+                    Segunda
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="1" name="selected-days" id="flexCheckDefault">
+                  <label class="form-check-label" for="flexCheckDefault">
+                    Terça
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="2" name="selected-days" id="flexCheckDefault">
+                  <label class="form-check-label" for="flexCheckDefault">
+                    Quarta
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="3" name="selected-days" id="flexCheckDefault">
+                  <label class="form-check-label" for="flexCheckDefault">
+                    Quinta
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="4" name="selected-days" id="flexCheckDefault">
+                  <label class="form-check-label" for="flexCheckDefault">
+                    Sexta
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="5" name="selected-days" id="flexCheckDefault">
+                  <label class="form-check-label" for="flexCheckDefault">
+                    Sábado
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="6" name="selected-days" id="flexCheckDefault">
+                  <label class="form-check-label" for="flexCheckDefault">
+                    Domingo
+                  </label>
+                </div>  
+            </div>
+            <div class="col-6 mb-3">
+              <button type="submit" class="btn mt-3 w-100" style="background-color: #00510F; color: white;">Cadastrar</button>
+            </div>  
+        </div>
+    </form>
+  </div>
+</section>
+{% block 'scripts' %}
+<script>
+  const dataInicialInput = document.getElementById('init-datetime');
+  const dataFinalInput = document.getElementById('final-datetime');
+  const mensagem = document.getElementById('message');
+
+  dataInicialInput.addEventListener('change', function () {
+    validarDatas();
+  });
+
+  dataFinalInput.addEventListener('change', function () {
+    validarDatas();
+  });
+
+  function validarDatas() {
+    const dataInicial = new Date(dataInicialInput.value);
+    const dataFinal = new Date(dataFinalInput.value);
+
+    if (isNaN(dataInicial) || isNaN(dataFinal)) {
+      mensagem.textContent = 'DATA INVÁLIDA!';
+      // Tome a ação apropriada quando as datas forem inválidas
+      return;
+    }
+
+    if (dataFinal < dataInicial) {
+      mensagem.textContent = 'DATA FINAL DEVE SER MAIOR QUE A DATA INICIAL!';
+      // Tome a ação apropriada quando a data final for menor que a data inicial
+    } else {
+      mensagem.textContent = '';
+      // As datas são válidas e a data final é maior que a data inicial
+    }
+  }
+
+  document.addEventListener("DOMContentLoaded", function() {
+  var selectedDaysSelect = document.getElementById("selected-days");
+  var availableDaysSelect = document.getElementById("available-days");
+
+  selectedDaysSelect.addEventListener("click", function(event) {
+    var clickedOption = event.target;
+    if (clickedOption.tagName === "OPTION") {
+      availableDaysSelect.appendChild(clickedOption);
+      availableDaysSelect.selectedIndex = -1;
+    }
+  });
+
+  availableDaysSelect.addEventListener("click", function(event) {
+    var clickedOption = event.target;
+    if (clickedOption.tagName === "OPTION") {
+      selectedDaysSelect.appendChild(clickedOption);
+      selectedDaysSelect.selectedIndex = -1;
+    }
+  });
+});
+
+</script>
+{% endblock %}
+
+{% endblock %}

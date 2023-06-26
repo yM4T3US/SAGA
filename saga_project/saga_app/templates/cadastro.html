@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block 'head' %}
+{% endblock %}
+
+{% block 'configuracoes' %}
+{% endblock %}
+
+{% block 'dinamic-content' %}
+<section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="rounded-4 container">
+    <div class="container-xl">
+        <div class="row align-items-center">
+          <div class="text-center col-xl-6 col-xl-6">
+              <h1 class="display-1 fw-bold" id="main-title"><strong>SAGA</strong></h1>
+              <p>Sistema Acadêmico de Gerenciamento de Atendimentos</p>
+          </div>
+          <div class="col-xl-6 col-xl-6">
+            <form action="{% url 'signup' %}" method="post" class="row g-3 mt-2">
+              {% csrf_token %}   
+              <div class="row justify-content-center">
+              <h2 class="mb-3 mt-sm-3 text-center">Cadastre-se</h2>
+              <div class="col-sm-5 pe-lg-2">
+                <div class="form-floating mb-3">
+                  <input type="text" name="first-name" class="form-control" id="username1" value="">
+                  <label for="floatingInput"><span style="color: #999999;">Nome</span></label>
+                  <small id="usercheck1">
+                        **Nome não pode ser nulo
+                </small>
+                </div>
+              </div>
+              <div class="col-sm-5 ps-lg-2">
+                <div class="form-floating mb-3">
+                  <input type="text" name="last-name" class="form-control" id="username2" value="">
+                  <label for="floatingInput"><span style="color: #999999;">Sobrenome</span></label>
+                  <small id="usercheck2">
+                        **Sobrenome não pode ser nulo
+                  </small>
+                </div>
+              </div>
+              <div class="col-sm-10">
+                <div class="form-floating mb-3">
+                  <input type="email" name="email" class="form-control" id="email" placeholder="name@example.com" value="">
+                  <label for="floatingInput"><span style="color: #999999;">E-mail</span></label>
+                  <small id="emailvalid"
+                           class="invalid-feedback" style="color: white">
+                        O e-mail deve ser válido
+                    </small>
+                </div>
+              </div>
+              <div class="col-sm-10">
+                <div class="form-floating mb-3">
+                  <input type="password" name="password" id="password" class="form-control" placeholder="name@example.com" value="">
+                  <label for="floatingInput"><span style="color: #999999;">Senha</span></label>
+                  <small id="passcheck">
+                        <smal>**Senha inválida</smal>
+                  </small>
+                </div>
+              </div>
+              <div class="col-sm-10">
+                <div class="form-floating mb-3">
+                  <input type="password" id="password-confirmation" name="password-confirm" class="form-control" placeholder="name@example.com" value="">
+                  <label for="floatingInput"><span style="color: #999999;">Confirmar senha</span></label>
+                  <small id="conpasscheck"
+                        >
+                        <smal>**As senhas não conferem</smal>
+                </small>
+                </div>
+              </div>
+              <div class="col-sm-10">
+                <div class="form-floating mb-3">
+                  <input type="tel" name="phone" class="phone_with_ddd form-control" id="floatingInput">
+                  <label for="floatingInput"><span style="color: #999999;">Telefone</span></label>
+                </div>
+              </div>
+              <div class="col-10">
+                <button type="submit" value="sign-up" class="btn mt-3 w-100" style="background-color: #00510F; color: white;">Cadastrar</button>
+              </div>
+              <div class="col-10 mt-3">
+                <a style="color: white; text-decoration: none;" href="{% url 'login' %}"><p class="text-center">Já tenho uma conta</p></a> 
+              </div>
+            </form>   
+          </div>
+        </div>
+    </div>
+  </section>
+{% endblock %}
+{% block 'scripts' %}
+  <script>
+
+    var SPMaskBehavior = function (val) {
+      return val.replace(/\D/g, '').length === 11 ? '(00) 00000-0000' : '(00) 0000-00009';
+    },
+
+    spOptions = {
+    onKeyPress: function(val, e, field, options) {
+      field.mask(SPMaskBehavior.apply({}, arguments), options);
+      }
+    };
+
+    $('.phone_with_ddd').mask(SPMaskBehavior, spOptions);
+
+    // Validate Username
+    $("#usercheck1").hide();
+    $("#usercheck2").hide();
+    let usernameError = true;
+    
+    $("#username1").keyup(function () {
+        validateUsername("#username1", "#usercheck1");
+    });
+
+    $("#username2").keyup(function () {
+        validateUsername("#username2", "#usercheck2");
+    });
+
+    
+ 
+    function validateUsername(tag, check) {
+        let usernameValue = $(tag).val();
+        let userCheck = $(check)
+        if (usernameValue.length == "") {
+            $(userCheck).show();
+            usernameError = false;
+            return false;
+        } else if (usernameValue.length < 3 || usernameValue.length > 10) {
+            $(userCheck).show();
+            $(userCheck).html("**Quantidade de letras deve estar entre 3 e 10");
+            usernameError = false;
+            return false;
+        } else {
+            $(userCheck).hide();
+        }
+    }
+
+
+     // Validate Email
+    const email = document.getElementById("email");
+    email.addEventListener("blur", () => {
+        let regex =
+        /^([_\-\.0-9a-zA-Z]+)@([_\-\.0-9a-zA-Z]+)\.([a-zA-Z]){2,7}$/;
+        let s = email.value;
+        if (regex.test(s)) {
+            email.classList.remove("is-invalid");
+            emailError = true;
+        } else {
+            email.classList.add("is-invalid");
+            emailError = false;
+        }
+    });
+
+    // Validate Password
+    $("#passcheck").hide();
+    $("#conpasscheck").hide();
+
+    let passwordError = true;
+    let passwordConfirmationError = true;
+
+    $("#password").keyup(function () {
+        let passwordValue = $("#password").val();
+        let passcheck = "#passcheck";
+        let password = "#password"
+        
+        validatePassword(password, passwordValue, passcheck);
+    });
+
+    $("#password-confirmation").keyup(function () {
+      let passwordValue = $("#password-confirmation").val();
+      let passcheck = "#conpasscheck";
+      let password = "#password-confirmation"
+
+      validatePassword(password, passwordValue, passcheck);
+    });
+    function validatePassword(password, passwordValue, passcheck) {
+        
+        //let passwordValueConfirmation = $("#password-confirmation").val()
+
+        if (passwordValue.length == "") {
+            $(passcheck).show();
+            passwordError = false;
+            return false;
+        }
+        
+
+        if (passwordValue.length < 3 || passwordValue.length > 10) {
+            $(passcheck).show();
+            $(passcheck).html(
+                "A senha deve ter entre 3 a 10 caracteres"
+            );
+            $(passcheck).css("color", "white");
+            passwordConfirmationError = false;
+            return false;
+        } else {
+            $(passcheck).hide();
+        }
+    }
+
+  </script>
+{% endblock %}
