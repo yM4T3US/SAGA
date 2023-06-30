@@ -13,12 +13,14 @@
 <section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="rounded-4 container">
     <div class="container-xl">
         <div class="row align-items-center">
+          {% include 'messages.html' %}
           <div class="text-center col-xl-12 col-xl-12 mb-3">
               <h1 class="display-1 fw-bold";><strong>SAGA</strong></h1>
               <p>Sistema Acadêmico de Gerenciamento de Atendimentos</p>
           </div>
           <div class="col-xl-12 col-xl-6">
             <h3 class="mb-3 text-center">Login</h3>
+            
             <form action="{% url 'login' %}" method="POST">
               {% csrf_token %}
               <div class="row justify-content-center">

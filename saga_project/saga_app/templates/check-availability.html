@@ -4,8 +4,8 @@
 {% endblock %}
 {% block 'dinamic-content' %}
 <h1 class="text-center mt-3">Agendas da disciplina de {{discipline.name}}</h1>
-<div class="container" style="margin-top: 5vh;">
-  <div id="calendar" data-student-id="{{ id }}" data-username="{{ first_name }}" data-discipline="{{ discipline.id }}" class="pb-5"></div>
+<div class="container" style="margin-top: 2vh;">
+  <div id="calendar" data-student-id="{{ id }}" data-username="{{ first_name }}" data-discipline="{{ discipline.id }}" ></div>
 </div>
 
 {% endblock %}
@@ -21,6 +21,7 @@
     var discipline = $('#calendar').data('discipline')
     var studentId = $('#calendar').data('student-id')
     var studentName = $('#calendar').data('username')
+    console.log(studentName)
 
     const monthNames = [
       'January', 'February', 'March', 'April', 'May', 'June',
@@ -52,7 +53,7 @@
               badge: tableData[i].status == false ? "Agendar horário" : "Cancelar",
               description: (function() {
                 if (tableData[i].status === false) {
-                  return ""
+                  return " "
                 } else if (tableData[i].student_id == studentId) {
                   return `Agendado por:  ${studentName}`
                 } else {
@@ -95,6 +96,8 @@
       const text = $('#calendar').data('username');
       const studentId = $("#calendar").data('student-id');
       const scheduleId = $(this).attr('id');
+
+    
       
 
       // Encontra a div pai correspondente usando closest()
@@ -102,6 +105,7 @@
 
       // Encontra o elemento dentro da div pai onde você deseja adicionar o texto usando find()
       const elementoTexto = divPai.find('.event-desc');
+      
 
       // Adiciona o texto ao elemento encontrado
       
@@ -109,19 +113,16 @@
       
       
 
-      if (/*$(this).data('scheduled') === undefined ||*/ $(this).data('scheduled') === false) {
+      if ($(this).data('scheduled') === false) {
         const bulletElement = divPai.find('.event-bullet-holiday');
         
 
-        var linha1 = $('<div>').text('Agendado por: ' +text);
-        
-
-        elementoTexto.append(linha1);
+        elementoTexto.append('Agendado por: ' + text);
         bulletElement.removeClass('event-bullet-holiday');
         bulletElement.addClass('event-bullet-event');
         badge.text("Cancelar");
-        $(this).data('scheduled', true);
-        $(this).data('student-id', studentId)
+        $(this).data('scheduled', true);  
+        $(this).data('student-id', studentId);
 
     } else {
         const bulletElement = divPai.find('.event-bullet-event');

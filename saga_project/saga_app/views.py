@@ -31,6 +31,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
 from datetime import timedelta
+from PIL import Image
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 
     
@@ -75,6 +77,7 @@ def sign_up(request):
       user = User.objects.create_user(email=email, password=password, first_name=first_name, last_name=last_name, phone=phone)
       user.save()
       assign_role(user, "student")
+      messages.success(request, "Usuário cadastrado com sucesso!")
       return render(request, "login.html")
     
 
@@ -252,16 +255,19 @@ def profile(request):
     first_name = request.POST.get('first-name')
     last_name = request.POST.get('last-name')
     email = request.POST.get('email')
-    password = request.POST.get('password')
-    password1 = request.POST.get('password-confirm')
+    '''password = request.POST.get('password')
+    password1 = request.POST.get('password-confirm')'''
     phone = request.POST.get('phone')
-    if not User.objects.filter(email=email).first():
-      user_update = User.objects.get(email=email)
-      user_update.first_name = first_name
-      user_update.last_name = last_name
-      user_update.password = password
-      user_update.phone = phone
-      user_update.save()
+    profile_picture = request.FILES['profile-picture']
+    uploaded_file = SimpleUploadedFile(profile_picture.name, profile_picture.read(), content_type=profile_picture.content_type)
+    user_update = User.objects.get(email=email)
+    user_update.first_name = first_name
+    user_update.last_name = last_name
+    user_update.phone = phone
+    user_update.profile_image.save(profile_picture.name, uploaded_file, save=True)
+    user_update.save()
+    return redirect('profile')
+
 
   
 
@@ -496,7 +502,9 @@ def availability(request):
       if return_time == True:
         availability.save()
         #Colocar mensagem
-        return redirect('availability', disciplina.id, method=0)
+        '''return redirect('availability', disciplina.id)'''
+        disc = Availability.objects.filter(professor=usuario_logado, discipline=disciplina)
+        return render(request, 'availability.html', {"availability": disc, "discipline":disciplina})
       if return_time == False:
         return HttpResponse("Não foi possivel criar registros no tabela Time, Verifique conflitos de agenda")
 

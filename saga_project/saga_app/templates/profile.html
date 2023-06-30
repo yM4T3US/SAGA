@@ -9,89 +9,98 @@
 
 {% block 'dinamic-content' %}
 <section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="rounded-4 container">
-    <div class="container-xl">
-        <div class="row align-items-center justify-content-center">
-          <div class="col-xl-6 col-xl-6">
-            <form action="{% url 'signup' %}" method="post" class="row g-3 mt-2" id="profile-form">
-              {% csrf_token %}   
-              <div class="row justify-content-center">
-              <h2 class="mb-3 mt-sm-3 text-center">Alterar Perfil</h2>
-              <div class="text-center mb-3">
-                {% if user.profile_image %} 
-                <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" fill="currentColor" class="bi bi-person-circle" viewBox="0 0 16 16">
-                  <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
-                  <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
-                </svg>
-                {% else %}
-                <img src="{{ user.profile_image.url }}" class="rounded-4" alt="" style="width: 300px; position: relative;">
-                {% endif %}
+  <div class="container-xl">
+    <div class="row align-items-center justify-content-center">
+      <div class="col-xl-6 col-xl-6">
+        <form action="{% url 'profile' %}" enctype="multipart/form-data" method="post" class="row g-3 mt-2" id="profile-form">
+          {% csrf_token %}
+          <div class="row justify-content-center">
+            <h2 class="mb-3 mt-sm-3 text-center">Alterar Perfil</h2>
+            <div class="text-center mb-3">
+              <img src="{{ user.profile_image.url }}" class="rounded-2" alt=""
+                style="width: 128px; position: relative;">
+            </div>
+            <div class="col-sm-10">
+              <div class="input-group mb-5">
+                <input type="file" class="form-control" name="profile-picture" id="inputGroupFile02" disabled accept="image/*">
               </div>
-              <div class="col-sm-5 pe-lg-2">
-                <div class="form-floating mb-3">
-                  <input type="text" name="first-name" class="form-control" id="floatingInput" value="{{user.first_name}}" disabled>
-                  <label for="floatingInput"><span style="color: #999999;">Nome</span></label>
-                </div>
+            </div>
+            <div class="col-sm-5 pe-lg-2">
+              <div class="form-floating mb-3">
+                <input type="text" name="first-name" class="form-control" id="floatingInput" value="{{user.first_name}}"
+                  disabled>
+                <label for="floatingInput"><span>Nome</span></label>
               </div>
-              <div class="col-sm-5 ps-lg-2">
-                <div class="form-floating mb-3">
-                  <input type="text" name="last-name" class="form-control" id="floatingInput" value="{{user.last_name}}" disabled>
-                  <label for="floatingInput"><span style="color: #999999;">Sobrenome</span></label>
-                </div>
+            </div>
+            <div class="col-sm-5 ps-lg-2">
+              <div class="form-floating mb-3">
+                <input type="text" name="last-name" class="form-control" id="floatingInput" value="{{user.last_name}}"
+                  disabled>
+                <label for="floatingInput"><span style="color: #999999;">Sobrenome</span></label>
               </div>
-              <div class="col-sm-10">
-                <div class="form-floating mb-3">
-                  <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com" value="{{user.email}}" disabled>
-                  <label for="floatingInput"><span style="color: #999999;">E-mail</span></label>
-                </div>
+            </div>
+            <div class="col-sm-10">
+              <div class="form-floating mb-3">
+                <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+                  value="{{user.email}}" disabled>
+                <label for="floatingInput"><span style="color: #999999;">E-mail</span></label>
               </div>
-              <div class="col-sm-10">
-                <div class="form-floating mb-3">
-                  <input type="password" name="password" class="form-control" id="floatingInput" placeholder="name@example.com" value="" disabled>
-                  <label for="floatingInput"><span style="color: #999999;">Senha</span></label>
-                </div>
+            </div>
+            <div class="col-sm-10">
+              <div class="form-floating mb-3">
+                <input type="password" name="password" class="form-control" id="floatingInput"
+                  placeholder="name@example.com" value="" disabled>
+                <label for="floatingInput"><span style="color: #999999;">Senha</span></label>
               </div>
-              <div class="col-sm-10">
-                <div class="form-floating mb-3">
-                  <input type="password" name="password-confirm" class="form-control" id="floatingInput" placeholder="name@example.com" value="" disabled>
-                  <label for="floatingInput"><span style="color: #999999;">Confirmar senha</span></label>
-                </div>
+            </div>
+            <div class="col-sm-10">
+              <div class="form-floating mb-3">
+                <input type="password" name="password-confirm" class="form-control" id="floatingInput"
+                  placeholder="name@example.com" value="" disabled>
+                <label for="floatingInput"><span style="color: #999999;">Confirmar senha</span></label>
               </div>
-              <div class="col-sm-10">
-                <div class="form-floating mb-3">
-                  <input type="tel" name="phone" class="form-control" id="floatingInput" value="{{user.phone}}" disabled>
-                  <label for="floatingInput"><span style="color: #999999;">Telefone</span></label>
-                </div>
+            </div>
+            <div class="col-sm-10">
+              <div class="form-floating mb-3">
+                <input type="tel" name="phone" class="form-control" id="floatingInput" value="{{user.phone}}" disabled>
+                <label for="floatingInput"><span style="color: #999999;">Telefone</span></label>
               </div>
-              <div class="col-10">
-                <button type="button" class="btn mt-3 w-100" id="enable-editing" onclick="enableEditing()" active="false" style="background-color: rgba(8, 242, 133, 0.37); color: white;">Habilitar Edição</button>
-              </div>
-              <div class="col-10">
-                <button type="submit" value="sign-up" class="btn mt-3 w-100" style="background-color: #00510F; color: white;">Salvar</button>
-              </div>
-            </form>   
-          </div>
-        </div>
+            </div>
+            <div class="col-10">
+              <button type="button" class="btn mt-3 w-100" id="enable-editing" onclick="enableEditing()" active="false"
+                style="background-color: rgba(8, 242, 133, 0.37); color: white;">Habilitar Edição</button>
+            </div>
+            <div class="col-10">
+              <button type="submit" value="sign-up" class="btn mt-3 w-100"
+                style="background-color: #00510F; color: white;">Salvar</button>
+            </div>
+        </form>
+      </div>
     </div>
-  </section>
+  </div>
+</section>
 {% endblock %}
 {% block 'scripts' %}
 <script>
-function enableEditing() {
+  function enableEditing() {
     var form = document.getElementById("profile-form");
     var inputs = form.querySelectorAll("input");
     var button = document.getElementById("enable-editing");
-    
+
+
+
     for (let i = 0; i < inputs.length; i++) {
-        if (inputs[i].name !== "email") {
-            if (inputs[i].active == false) {
-            inputs[i].disabled = true
-            inputs[i].active = true
+      
+        if (inputs[i].active == false) {
+          inputs[i].disabled = true
+          inputs[i].active = true
+
         } else {
-            inputs[i].disabled = false
-            inputs[i].active = false
+          inputs[i].disabled = false
+          inputs[i].active = false
         }
-        }     
+      
     }
-}
+  }
 </script>
 {% endblock %}

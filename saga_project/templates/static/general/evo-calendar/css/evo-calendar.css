@@ -461,11 +461,11 @@ tr.calendar-body .calendar-day .day[disabled] {
 }
 .event-container > .event-icon > div.event-bullet-event,
 .event-indicator > .type-bullet > div.type-event {
-    background-color: #ff7575;
+    background-color: #990000;
 }
 .event-container > .event-icon > div.event-bullet-holiday,
 .event-indicator > .type-bullet > div.type-holiday {
-    background-color: green;
+    background-color: rgb(0, 92, 0);
 }
 .event-container > .event-icon > div.event-bullet-birthday,
 .event-indicator > .type-bullet > div.type-birthday {
