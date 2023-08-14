@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
 
 urlpatterns = [
@@ -34,6 +34,6 @@ urlpatterns = [
     path('del_availability/', views.del_availability, name='del_availability'),
     path('courses-a/', views.courses_a, name='courses-a'), # curso para cadastrar a disponibilidade
     path('disciplines-a/', views.disciplines_a, name='disciplines-a'), # disciplina para cadastrar a disponibilidade
-    path('professor-courses-card', views.professor_courses_card, name='professor-courses-card')
-
+    path('professor-courses-card', views.professor_courses_card, name='professor-courses-card'),
+    path('email/', include('envia_email'))
 ]
