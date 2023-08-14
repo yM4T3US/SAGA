@@ -9,6 +9,7 @@
 
 {% block 'dinamic-content' %}
 <section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="rounded-4 container">
+  {% include 'messages.html' %}
     <div class="container-xl">
         <div class="row align-items-center">
           <div class="text-center col-xl-6 col-xl-6">
@@ -148,7 +149,7 @@
         }
     });
 
-    // Validate Password
+   // Validate Password
     $("#passcheck").hide();
     $("#conpasscheck").hide();
 
@@ -158,41 +159,57 @@
     $("#password").keyup(function () {
         let passwordValue = $("#password").val();
         let passcheck = "#passcheck";
-        let password = "#password"
+        let password = "#password";
         
         validatePassword(password, passwordValue, passcheck);
+        checkPasswordMatch();
     });
 
     $("#password-confirmation").keyup(function () {
-      let passwordValue = $("#password-confirmation").val();
-      let passcheck = "#conpasscheck";
-      let password = "#password-confirmation"
+        let passwordValue = $("#password-confirmation").val();
+        let passcheck = "#conpasscheck";
+        let password = "#password-confirmation";
 
-      validatePassword(password, passwordValue, passcheck);
+        validatePassword(password, passwordValue, passcheck);
+        checkPasswordMatch();
     });
-    function validatePassword(password, passwordValue, passcheck) {
-        
-        //let passwordValueConfirmation = $("#password-confirmation").val()
 
-        if (passwordValue.length == "") {
+    function validatePassword(password, passwordValue, passcheck) {
+        if (passwordValue.length === 0) {
             $(passcheck).show();
             passwordError = false;
             return false;
         }
-        
 
         if (passwordValue.length < 3 || passwordValue.length > 10) {
             $(passcheck).show();
-            $(passcheck).html(
-                "A senha deve ter entre 3 a 10 caracteres"
-            );
+            $(passcheck).html("A senha deve ter entre 3 a 10 caracteres");
             $(passcheck).css("color", "white");
             passwordConfirmationError = false;
             return false;
-        } else {
-            $(passcheck).hide();
+        }
+
+        $(passcheck).hide();
+        return true;
+    }
+
+    function checkPasswordMatch() {
+        let passwordValue = $("#password").val();
+        let confirmPasswordValue = $("#password-confirmation").val();
+        let conpasscheck = "#conpasscheck";
+
+        if (passwordValue === confirmPasswordValue) {
+            $(conpasscheck).hide();
+            passwordConfirmationError = true;
+        } else if (confirmPasswordValue.length > 0) {
+            $(conpasscheck).show();
+            $(conpasscheck).html("As senhas não conferem");
+            $(conpasscheck).css("color", "white");
+            passwordConfirmationError = false;
         }
     }
+
+
 
   </script>
 {% endblock %}

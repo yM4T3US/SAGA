@@ -74,11 +74,15 @@ def sign_up(request):
       password = request.POST.get('password')
       password1 = request.POST.get('password-confirm')
       phone = request.POST.get('phone')
-      user = User.objects.create_user(email=email, password=password, first_name=first_name, last_name=last_name, phone=phone)
-      user.save()
-      assign_role(user, "student")
-      messages.success(request, "Usuário cadastrado com sucesso!")
-      return render(request, "login.html")
+      if password == password1:
+        user = User.objects.create_user(email=email, password=password, first_name=first_name, last_name=last_name, phone=phone)
+        user.save()
+        assign_role(user, "student")
+        messages.success(request, "Usuário cadastrado com sucesso!")
+        return render(request, "login.html")
+      else:
+        messages.error(request, "Preencha todos os campos do formulário!")
+        return redirect('signup')
     
 
 #@has_role_decorator('professor')

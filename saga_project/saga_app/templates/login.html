@@ -24,19 +24,23 @@
             <form action="{% url 'login' %}" method="POST">
               {% csrf_token %}
               <div class="row justify-content-center">
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                   <div class="form-floating mb-3">
                     <input type="email" class="form-control autocomplete" id="floating-input-email" name="email" placeholder="name@example.com" autocomplete="off">
                     <label for="floatingInput"><span style="color: #999999;">E-mail</span></label>
                   </div>
                 </div>
                 <div></div>
-                <div class="col-sm-6">
+                <div class="col-sm-5">
                   <div class="form-floating">
                     <input type="password" class="form-control autocomplete" id="floating-input-password" name="password" placeholder="Password" autocomplete="off">
                     <label for="floatingPassword"><span style="color: #999999;">Senha</span></label>
                 </div>
-                <button type="submit" class="btn mt-3 w-100" style="background-color: #00510F; color: white;">Entrar</button>
+                <div class="row justify-content-center my-3">
+                  <div class="col-sm-12">
+                    <button type="submit" class="btn w-100" style="background-color: #00510F; color: white;">Entrar</button>
+                  </div>
+                </div>
                 <div class="container">
                   <div class="row mt-3 align-items-center">
                     <div class="col-6 ps-0">
