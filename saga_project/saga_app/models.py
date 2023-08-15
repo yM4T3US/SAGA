@@ -4,6 +4,7 @@ from .manager import *
 
 class Course(models.Model):
     name = models.CharField(max_length=50, null=True, blank=True)
+    course_image = models.ImageField(default="general/img/default_course.jpg", null=True, blank=True, upload_to='images/')
     
     def __str__(self) -> str:
         return self.name
