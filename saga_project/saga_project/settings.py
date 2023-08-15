@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 from django.contrib.messages import constants as messages
+##from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -127,16 +128,25 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 ROLEPERMISSIONS_MOULE = 'saga_app.roles'
+
+# Configs de email
+DEFAULT_FROM_EMAIL = "appsaga@outlook.com"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_FROM_USER = 'mateusjassppir@gmail.com'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'mateusjassppir@gmail.com'
-EMAIL_HOST_PASSWORD = "Mateus435534"
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
+EMAIL_HOST_USER= 'appsaga@outlook.com'
+EMAIL_HOST_PASSWORD= 'Saga@d14m08'
+EMAIL_USE_TLS= True
+EMAIL_PORT= 587
+EMAIL_HOST= 'smtp.office365.com'
+
+##EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+##EMAIL_HOST = config('EMAIL_HOST')
+##EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+##EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+##EMAIL_USE_TLS = config('EMAIL_USE_TLS')
+##EMAIL_PORT = config('EMAIL_PORT')
 
 
-PASSWORD_RESET_TIMEOUT = 14400
+#PASSWORD_RESET_TIMEOUT = 14400
 
 
 MESSAGE_TAGS = {
