@@ -33,6 +33,7 @@ from django.shortcuts import get_object_or_404
 from datetime import timedelta
 from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core.mail import send_mail
 
 
     
@@ -542,6 +543,9 @@ def professor_register(request):
     return render(request, 'professor-register.html')
   
 
+def envia_emai(request): # teste de email 
+  send_mail('Assunto', 'texto do email', 'appsaga@outlook.com', ['rafaelborille@hotmail.com'] )
+  return HttpResponse("Olá email")
       
 
   

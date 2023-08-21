@@ -35,5 +35,5 @@ urlpatterns = [
     path('courses-a/', views.courses_a, name='courses-a'), # curso para cadastrar a disponibilidade
     path('disciplines-a/', views.disciplines_a, name='disciplines-a'), # disciplina para cadastrar a disponibilidade
     path('professor-courses-card', views.professor_courses_card, name='professor-courses-card'),
-    path('email/', include('envia_email')), #teste 
+    path('email/', views.envia_emai, name='email'), #teste email
 ]
