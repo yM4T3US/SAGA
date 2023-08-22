@@ -11,28 +11,37 @@
 <main>
   <section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="container mt-md-5">
     {% include 'messages.html' %}
-    <form action="{% url 'add-course' %}" method="post">
-
+    <form action="{% url 'add-course' %}" enctype="multipart/form-data" method="post">
       {% csrf_token %}
-      <div class="container">
-        <h1 class="text-center">Adicionar Curso</h1>
-        <div>
-          <div class="row">
-            <div class="col-md-12" id="first-name">
-              <label for="inputFirstName" class="form-label">Nome do curso</label>
-              <input style="--bs-bg-opacity: 0.1;" type="text" id="course-name" class="form-control"
-                name="course-name" value="{{ course.name }}">
+      <div class="row justify-content-center">
+        <div class="col-6">
+          <div>
+            <h1 class="text-center">Adicionar Curso</h1>
+          </div>
+          <div>
+            <div class="text-center mb-3">
+              <img src="{% static 'general/img/default_course.jpg' %}" class="rounded-2" alt=""
+                style="width: 200px; position: relative;">
             </div>
+            <div class="col-12">
+              <div class="input-group mb-3">
+                <input type="file" class="form-control" name="profile-picture" id="inputGroupFile02" accept="image/*">
+              </div>
+            </div>
+            <div class="form-floating mb-3">
+              <input value="{{ course.name }}" type="email" class="form-control autocomplete" id="floating-input-email"
+                name="course-name" placeholder="name@example.com" autocomplete="off">
+              <label for="floatingInput"><span style="color: #999999;">Nome do curso</span></label>
+            </div>
+          </div>
+          <div>
+            <button type="submit" class="btn mt-3 w-100" style="background-color: #00510F; color: white;"
+              id="send">Cadastrar
+            </button>
           </div>
         </div>
       </div>
-      <div class="col-3 m-auto">
-        <button type="submit" class="btn mt-3 w-100"
-          style="background-color: #00510F; color: white;" id="send">Cadastrar</button>
-      </div>
-      </div>
     </form>
-
   </section>
 </main>
 {% endblock %}
