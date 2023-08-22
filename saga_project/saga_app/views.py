@@ -319,47 +319,6 @@ def remove(request):
   data = {}
   return JsonResponse(data)
 
-'''def availability(request):
-    if request.method == "GET":
-      return render(request, 'availability.html')
-    else:
-      initial_datetime = request.POST.get("initial-datetime")
-      final_datetime = request.POST.get("final-datetime")
-      duration = int(request.POST.get("duration"))
-      
-      av1 = Availability.objects.filter(initial_datetime=initial_datetime).first()
-      av2 = Availability.objects.filter(final_datetime=final_datetime).first()
-      
-      if av1 and av2:
-        return HttpResponse("Já existe disponibilidade cadastrada para o mesmo horário")
-      if int(initial_datetime[8:10]) < int(str(datetime.date.today())[8:10]):
-        return HttpResponse("Data inicial não pode ser anterior à data atual")
-      availability = Availability(initial_datetime=initial_datetime, final_datetime=final_datetime, duration=duration)
-      availability.save()
-      dia_semana = request.POST.getlist("dia-semana")
-      gerar_horario(availability,dia_semana)
-
-def gerar_horario(availability:Availability,dia_semana):
-    data_inicio = datetime.date(availability.initial_datetime[0:4], availability.initial_datetime[5:7], availability.initial_datetime[8:10]) 
-    data_fim = datetime.date(availability.final_datetime[0:4], availability.final_datetime[5:7], availability.final_datetime[8:10]) 
-    hora_inicial = datetime.time(availability.initial_datetime[11:13], availability.initial_datetime[14:16], availability.initial_datetime[17:19]) 
-    hora_final = datetime.time(availability.final_datetime[11:13], availability.final_datetime[14:16], availability.final_datetime[17:19]) 
-
-    data_teste = data_inicio
-    while (data_teste <= data_fim):     
-      if Time.objects.filter(date=data_teste,initial_time__ge=datetime.time(hora_inicial),final_time__le=datetime.time(hora_inicial)).first(): # ferifica se a hora_inicial a ser cadastrada está entre um registro da tabela
-        return HttpResponse("Hora inicial em conflito com registros existentes") #renderizar erro
-      elif Time.objects.filter(date=data_teste,initial_time__ge=datetime.time(hora_final),final_time__le=datetime.time(hora_final)).first(): #ferifica se a hora_final a ser cadastrada está entre um registro da tabela
-        return HttpResponse("Hora Final em conflito com registros existentes") #renderizar erro
-      else: #cadsatrar os horarios na tabela com suas respectivas divisões
-        for i in dia_semana:  #percorre os indices da semana
-          if data_teste.weekday() == i: #verifica se a data é do dia da semana correspondete
-            #dividir horario e incluir na tabela TIME
-            pass
-
-      data_teste = data_teste + datetime.timedelta(days=1) 
-      return HttpResponse("Registros incluidos com sucesso")'''
-
 
 def gerar_horario(availability:Availability,dia_semana,usuario_logado:User, disciplina:Discipline):
     data_inicio = availability.initial_datetime.date()
@@ -522,13 +481,35 @@ def update_scheduled_time(request):
         student_id = int(request.POST.get('student_id'))
         student = User.objects.get(id=student_id)
         time = Time.objects.get(id=schedule_id)
+        professor = User.objects.get(id=time.professor_id)
+        email_professor = [professor.email]
+        email_student = [student.email]
+        name_professor = professor.first_name + ' ' + professor.last_name
+        name_student = student.first_name + ' ' + student.last_name
+        horario = time.initial_time.strftime("%H:%M") + ' à ' + time.final_time.strftime("%H:%M")
+        data = time.date.strftime("%d/%m/%Y")
         
-        if scheduled == False:
+        if scheduled == False: #cancela agendamento
           time.status = False
           time.student = None
-        else:
+          assunto = 'Agendamento SAGA cancelado'
+          #email professor
+          corpo = 'O agendamento do dia ' + data + ' no horario: ' + horario + ' foi cancelado pelo aluno: ' + name_student + '.'
+          envia_email(assunto, corpo, email_professor) 
+          #email aluno
+          corpo = 'Você cancelou o agendamento do dia ' + data + ' no horario: ' + horario + ' com o professor ' + name_professor
+          envia_email(assunto, corpo, email_student) 
+
+        else: #realiza agendamento
           time.status = True
           time.student = student
+          assunto = 'Novo agendamento no SAGA'
+          #email professor
+          corpo = 'O aluno: ' + name_student + ' realizou um agendamento de atendimento no dia:  ' + data + ' no seguinte horario: ' + horario
+          envia_email(assunto, corpo, email_professor)
+          #email aluno
+          corpo = 'Você realizou um agendamento de atendimento no dia:  ' + data + ' no seguinte horario: ' + horario + ' com o professor ' + name_professor
+          envia_email(assunto, corpo, email_student)          
 
         time.save()
 
@@ -542,10 +523,17 @@ def professor_register(request):
   if request.method == "GET":
     return render(request, 'professor-register.html')
   
-
-def envia_emai(request): # teste de email 
-  send_mail('Assunto', 'texto do email', 'appsaga@outlook.com', ['rafaelborille@hotmail.com'] )
+def testa_email(request): # teste de email
+  destinatario = ['rafaelborille@hotmail.com']
+  assunto = 'teste de email SAGA'
+  corpo = 'Confirmação de agendamento do Saga'
+  email = envia_email(assunto, corpo, destinatario)
   return HttpResponse("Olá email")
+
+
+def envia_email(assunto, corpo, destinatarios): # Envia email
+  send_mail(assunto, corpo, 'appsaga@outlook.com', destinatarios )
+  
       
 
   
