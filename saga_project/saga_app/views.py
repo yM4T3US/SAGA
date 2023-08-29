@@ -17,13 +17,11 @@ from django.utils import timezone
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
-from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError 
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
-from .utils import generate_token
 from django.core.mail import EmailMessage
 from django.conf import settings
 from django.http import JsonResponse
@@ -34,7 +32,10 @@ from datetime import timedelta
 from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.mail import send_mail
-
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from .utils import generate_token
+from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
+from django.urls import reverse
 
     
 def home(request):
@@ -50,9 +51,12 @@ def login(request):
      user = authenticate(request, email=email, password=password)
      
      if user:
-      login_django(request, user)
-      if request.user.is_authenticated:
-        return redirect('home')
+      if user.is_email_verified:    # verifica se o email é verificado
+        login_django(request, user)
+        if request.user.is_authenticated:
+          return redirect('home')
+      else:
+        return HttpResponse("Email do usuario não verificado!")
      else:
       return HttpResponse("Usuário ou senha inválidos")
      
@@ -79,7 +83,8 @@ def sign_up(request):
         user = User.objects.create_user(email=email, password=password, first_name=first_name, last_name=last_name, phone=phone)
         user.save()
         assign_role(user, "student")
-        messages.success(request, "Usuário cadastrado com sucesso!")
+        send_activation_email(user, request)
+        messages.success(request, "Usuário cadastrado com sucesso, Verifique seu email para validar o cadastro!")
         return render(request, "login.html")
       else:
         messages.error(request, "Preencha todos os campos do formulário!")
@@ -534,8 +539,37 @@ def testa_email(request): # teste de email
 def envia_email(assunto, corpo, destinatarios): # Envia email
   send_mail(assunto, corpo, 'appsaga@outlook.com', destinatarios )
   
-      
+def send_activation_email(user, request):  # envai email de ativação
+  current_site = get_current_site(request)
+  email_subject = 'Ative sua conta'
+  email_body = render_to_string('authentication/activate.html', {
+      'user': user,
+      'domain': current_site,
+      'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+      'token': generate_token.make_token(user)
+  })
 
+  envia_email(email_subject,email_body,[user.email])
+
+
+def activate_user(request, uidb64, token):
+  try:
+      uid = str(urlsafe_base64_decode(uidb64))
+      user = User.objects.get(pk=uid)
+
+  except Exception as e:
+      user = None
+
+  if user and generate_token.check_token(user, token):
+      user.is_email_verified = True
+      user.save()
+
+      messages.add_message(request, messages.SUCCESS,
+                             'Email verificado! Você pode fazer login')
+      return redirect(reverse('login'))
+      
+  
+  return render(request, 'activate-failed.html', {"user": user})
   
 
       

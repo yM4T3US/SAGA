@@ -19,7 +19,7 @@ class User(AbstractUser, PermissionsMixin):
     phone = models.CharField(max_length=16)
     professor = models.BooleanField(default=False)
     profile_image = models.ImageField(default="images/person-circle.svg", null=True, blank=True, upload_to='images/')
-
+    
 
     objects = UserManager()
     
