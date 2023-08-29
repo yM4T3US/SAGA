@@ -546,7 +546,7 @@ def envia_email(assunto, corpo, destinatarios): # Envia email
 def send_activation_email(user, request):  # envai email de ativação
   current_site = get_current_site(request)
   email_subject = 'Ative sua conta'
-  email_body = render_to_string('authentication/activate.html', {
+  email_body = render_to_string('activate.html', {
       'user': user,
       'domain': current_site,
       'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -557,13 +557,15 @@ def send_activation_email(user, request):  # envai email de ativação
 
 
 def activate_user(request, uidb64, token):
+  print(uidb64)
   try:
-      uid = str(urlsafe_base64_decode(uidb64))
+      uid = urlsafe_base64_decode(uidb64)
+      print(uid)
       user = User.objects.get(pk=uid)
 
   except Exception as e:
       user = None
-
+  print(user)
   if user and generate_token.check_token(user, token):
       user.is_email_verified = True
       user.save()
