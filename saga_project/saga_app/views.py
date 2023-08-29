@@ -210,8 +210,12 @@ def add_course(request):
     return render(request, 'add-course.html')
   else:
     course_name = request.POST.get('course-name')
+    course_image = request.FILES.get('course-image')
     course = Course(name=course_name)
     course.save()
+    if course_image is not None:
+      uploaded_file = SimpleUploadedFile(course_image.name, course_image.read(), content_type=course_image.content_type)
+      course.course_image.save(course_image.name, uploaded_file, save=True)
     messages.success(request, 'Curso cadastrado com sucesso!')
     return redirect('add-course')
 
@@ -238,7 +242,7 @@ def course_delete(request, course_id):
 def student_courses(request):
   if request.method == "GET":
     courses = Course.objects.all()
-    paginator = Paginator(courses, 8)
+    paginator = Paginator(courses, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, "student-courses.html", {"courses": page_obj})

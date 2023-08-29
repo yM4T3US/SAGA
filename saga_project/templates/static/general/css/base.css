@@ -79,6 +79,7 @@ color: white;
   object-fit: cover;
 }
 
+
 @media all and (min-width: 992px) {
 
   .dropdown-menu li {

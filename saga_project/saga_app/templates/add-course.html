@@ -11,7 +11,7 @@
 <main>
   <section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="container mt-md-5">
     {% include 'messages.html' %}
-    <form action="{% url 'add-course' %}" enctype="multipart/form-data" method="post">
+    <form action="{% url 'add-course' %}" id="course-form" enctype="multipart/form-data" method="post">
       {% csrf_token %}
       <div class="row justify-content-center">
         <div class="col-6">
@@ -19,18 +19,17 @@
             <h1 class="text-center">Adicionar Curso</h1>
           </div>
           <div>
-            <div class="text-center mb-3">
-              <img src="{% static 'general/img/default_course.jpg' %}" class="rounded-2" alt=""
-                style="width: 200px; position: relative;">
+            <div class="card mb-3 h-100">
+              <img id="image-preview" src="{% static 'general/img/default_course.jpg' %}" class="card-img-top p-0 m-0" alt="..." style="height: 18rem;">
             </div>
             <div class="col-12">
               <div class="input-group mb-3">
-                <input type="file" class="form-control" name="profile-picture" id="inputGroupFile02" accept="image/*">
+                <input type="file" class="form-control" name="course-image" id="image-input" accept="image/*">
               </div>
             </div>
-            <div class="form-floating mb-3">
-              <input value="{{ course.name }}" type="email" class="form-control autocomplete" id="floating-input-email"
-                name="course-name" placeholder="name@example.com" autocomplete="off">
+            <div class="form-floating mb-2">
+              <input value="{{ course.name.url }}" type="text" class="form-control autocomplete"
+                id="floating-input-email" name="course-name" autocomplete="off">
               <label for="floatingInput"><span style="color: #999999;">Nome do curso</span></label>
             </div>
           </div>
@@ -44,4 +43,25 @@
     </form>
   </section>
 </main>
+{% endblock %}
+{% block 'scripts' %}
+<script>
+  $(document).ready(function () {
+    $("#image-input").change(function () {
+      readURL(this);
+    });
+  });
+
+  function readURL(input) {
+    if (input.files && input.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        $("#image-preview").attr("src", e.target.result);
+      };
+
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
 {% endblock %}
