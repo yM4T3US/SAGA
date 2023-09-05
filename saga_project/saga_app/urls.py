@@ -36,5 +36,5 @@ urlpatterns = [
     path('disciplines-a/', views.disciplines_a, name='disciplines-a'), # disciplina para cadastrar a disponibilidade
     path('professor-courses-card', views.professor_courses_card, name='professor-courses-card'),
     path('email/', views.testa_email, name='email'), #teste email
-    path('activate-user/<uidb64>/<token>', views.activate_user, name='activate'),
+    path('activate-user/<uidb64>/<token>', views.activate_user, name='activate-user'),
 ]

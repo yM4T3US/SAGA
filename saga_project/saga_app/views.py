@@ -37,6 +37,7 @@ from .utils import generate_token
 from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
 from django.urls import reverse
 
+
     
 def home(request):
    return render(request, 'home.html')
@@ -497,35 +498,50 @@ def update_scheduled_time(request):
         name_student = student.first_name + ' ' + student.last_name
         horario = time.initial_time.strftime("%H:%M") + ' à ' + time.final_time.strftime("%H:%M")
         data = time.date.strftime("%d/%m/%Y")
-        
+
         if scheduled == False: #cancela agendamento
           time.status = False
           time.student = None
           assunto = 'Agendamento SAGA cancelado'
           #email professor
-          corpo = 'O agendamento do dia ' + data + ' no horario: ' + horario + ' foi cancelado pelo aluno: ' + name_student + '.'
-          envia_email(assunto, corpo, email_professor) 
+          email_body = render_to_string('cancel-professor.html', {
+          'name_student': name_student,
+          'name_professor': name_professor,
+          'date': data,
+          'horario': horario})
+          envia_email(assunto, email_body, email_professor) 
           #email aluno
-          corpo = 'Você cancelou o agendamento do dia ' + data + ' no horario: ' + horario + ' com o professor ' + name_professor
-          envia_email(assunto, corpo, email_student) 
+          email_body = render_to_string('cancel-student.html', {
+          'name_student': name_student,
+          'name_professor': name_professor,
+          'date': data,
+          'horario': horario})
+          envia_email(assunto, email_body, email_student) 
 
         else: #realiza agendamento
           time.status = True
           time.student = student
           assunto = 'Novo agendamento no SAGA'
           #email professor
-          corpo = 'O aluno: ' + name_student + ' realizou um agendamento de atendimento no dia:  ' + data + ' no seguinte horario: ' + horario
-          envia_email(assunto, corpo, email_professor)
+          email_body = render_to_string('student-schedule.html', {
+          'name_student': name_student,
+          'name_professor': name_professor,
+          'date': data,
+          'horario': horario})
+          envia_email(assunto, email_body, email_student)
           #email aluno
-          corpo = 'Você realizou um agendamento de atendimento no dia:  ' + data + ' no seguinte horario: ' + horario + ' com o professor ' + name_professor
-          envia_email(assunto, corpo, email_student)          
+          email_body = render_to_string('professor-schedule.html', {
+          'name_student': name_student,
+          'name_professor': name_professor,
+          'date': data,
+          'horario': horario})
+          envia_email(assunto, email_body, email_student)      
 
         time.save()
 
         return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'error'})
-
 
 
 def professor_register(request):
@@ -556,26 +572,25 @@ def send_activation_email(user, request):  # envai email de ativação
   envia_email(email_subject,email_body,[user.email])
 
 
+
 def activate_user(request, uidb64, token):
-  print(uidb64)
   try:
-      uid = urlsafe_base64_decode(uidb64)
-      print(uid)
-      user = User.objects.get(pk=uid)
+    uid = urlsafe_base64_decode(uidb64)
+    user = User.objects.get(pk=uid)
 
   except Exception as e:
-      user = None
+    user = None
+
   print(user)
   if user and generate_token.check_token(user, token):
-      user.is_email_verified = True
-      user.save()
-
-      messages.add_message(request, messages.SUCCESS,
-                             'Email verificado! Você pode fazer login')
-      return redirect(reverse('login'))
-      
-  
-  return render(request, 'activate-failed.html', {"user": user})
+    print("Entrou no IF")
+    user.is_email_verified = True
+    user.save()
+    messages.add_message(request, messages.SUCCESS, 'Email verificado com sucesso! Você já pode fazer login')   
+    return redirect(reverse('login'))
+    
+  else:
+    return render(request, 'activate-failed.html', {"user": user})
   
 
       

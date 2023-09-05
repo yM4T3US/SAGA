@@ -1,15 +1,12 @@
 {% autoescape off %}
 
 
-Olá {{user.first_name}}
+Olá {{name_student}}
 
-Use o link abaixo para verificar sua conta.
-
-
-http://{{domain}}{% url 'activate-user' uidb64=uid token=token %}
+Você cancelou o agendamento do dia {{date}} no horario {{horario}} com o professor {{name_professor}}
 
 
-SAGA
+<strong>SAGA</strong>
 Sistema Acadêmico de Gerenciamento de Atendimentos
 Instituto Federal do Rio Grande do Sul - Campus Vacaria
 https://ifrs.edu.br/vacaria/
