@@ -577,21 +577,25 @@ def activate_user(request, uidb64, token):
   try:
     uid = urlsafe_base64_decode(uidb64)
     user = User.objects.get(pk=uid)
-
   except Exception as e:
     user = None
 
-  print(user)
+  if user.is_email_verified == True:
+    messages.add_message(request, messages.SUCCESS, 'Email já verificado! Realize o login.')   
+    return redirect(reverse('login'))
+  
   if user and generate_token.check_token(user, token):
     print("Entrou no IF")
     user.is_email_verified = True
     user.save()
-    messages.add_message(request, messages.SUCCESS, 'Email verificado com sucesso! Você já pode fazer login')   
-    return redirect(reverse('login'))
-    
+    messages.add_message(request, messages.SUCCESS, 'Email verificado com sucesso! Você já pode fazer login.')   
+    return redirect(reverse('login'))    
   else:
     return render(request, 'activate-failed.html', {"user": user})
-  
+
+#esqueci minha senha - usar mesma logica da ativação do usuario- criar view que recebe a info do email e verifica a existencia
+# disparar o mesmo semelhante ao email de ativação aontando para uma view que valide o token e abra uma page passando o usuario com os campos para troca de senha
+# vericar antes no git se tem algo padrao do DJANGO   
 
       
       
