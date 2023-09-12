@@ -37,4 +37,9 @@ urlpatterns = [
     path('professor-courses-card', views.professor_courses_card, name='professor-courses-card'),
     path('email/', views.testa_email, name='email'), #teste email
     path('activate-user/<uidb64>/<token>', views.activate_user, name='activate-user'),
+    path('reset_password/', views.reset_password, name='reset_password'),
+    path('send_reset_password/', views.send_reset_password, name='send_reset_password'), #envia redefinição
+    path('redefine_pass_user/<uidb64>/<token>', views.redefine_pass_user, name='redefine_pass_user'), #valida redefinição
+    path('new_pass/<id_user>/<token>', views.new_pass, name='new_pass'), #validação 2 de token
+    
 ]

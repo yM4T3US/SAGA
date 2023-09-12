@@ -36,6 +36,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .utils import generate_token
 from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
 from django.urls import reverse
+from django.contrib.auth.hashers import make_password
 
 
     
@@ -59,7 +60,8 @@ def login(request):
       else:
         return HttpResponse("Email do usuario não verificado!")
      else:
-      return HttpResponse("Usuário ou senha inválidos")
+      messages.error(request, "Usuario ou senha invalidos!")
+      return render(request, 'login.html')
      
 def logout(request):
   logout_django(request)
@@ -597,6 +599,66 @@ def activate_user(request, uidb64, token):
 # disparar o mesmo semelhante ao email de ativação aontando para uma view que valide o token e abra uma page passando o usuario com os campos para troca de senha
 # vericar antes no git se tem algo padrao do DJANGO   
 
-      
-      
-       
+def reset_password(request): #pagina de redefinição
+  if request.method == "GET":
+    return render(request, 'reset_password.html')
+  else:
+    return render(request, 'login.html')
+
+@require_http_methods(["POST"]) 
+def send_reset_password(request): #envia redefinição
+  if request.method == "GET":
+    return render(request, 'reset_password.html')
+  else:
+    email = request.POST.get('email')
+    user = User.objects.filter(email=email)
+    if user:
+      user = User.objects.get(email=email)
+      current_site = get_current_site(request)
+      email_subject = 'Redefinição de senha SAGA'
+      email_body = render_to_string('reset_email_password.html', {
+      'user': user,
+      'domain': current_site,
+      'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+      'token': generate_token.make_token(user)
+      })
+
+      envia_email(email_subject,email_body,[user.email])
+      messages.success(request, "Confira em seu email as instruções para redefinição de senha")
+      return render(request, "login.html")
+
+    else:
+      messages.error(request, "Usuario não localizado, crie o seu cadastro para fazer login")
+      return redirect('signup')
+
+def redefine_pass_user(request,uidb64, token): # valida link da redefinição de senha 
+  try:
+    uid = urlsafe_base64_decode(uidb64)
+    user = User.objects.get(pk=uid)
+  except Exception as e:
+    user = None
+  
+  if user and generate_token.check_token(user, token):
+    token = generate_token.make_token(user)
+    return render(request, 'new_pass.html', {"user": user, "token" : token })  
+   
+  else:
+    messages.error(request, "Link de redefinição invalido!")
+    return render(request, 'login.html')
+  
+  
+def new_pass(request, id_user, token):     #redefine senha
+  if request.method == "GET":
+   return render(request, 'login.html')
+  else:
+    user = User.objects.get(id=id_user)
+    if user and generate_token.check_token(user, token):
+      new_password  = make_password(request.POST.get('password'))
+      user.password = new_password
+      user.save()   
+      messages.success(request, "Senha redefinida com sucesso!")
+      return render(request, 'login.html')
+    else:
+      messages.error(request, "Link de redefinição invalido!")
+      return render(request, 'login.html')
+  
