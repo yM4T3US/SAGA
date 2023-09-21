@@ -5,14 +5,188 @@
 {% block 'dinamic-content' %}
 <h1 class="text-center mt-3">Agendas da disciplina de {{discipline.name}}</h1>
 <div class="container" style="margin-top: 2vh;">
-  <div id="calendar" data-student-id="{{ id }}" data-username="{{ first_name }}" data-discipline="{{ discipline.id }}" ></div>
+  <div id="calendar"></div>
 </div>
+<div class="modal fade" id="send-scheduling" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Agendar horário</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form class="scheduling-form">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-2">
+            <label for="recipient-name" class="col-form-label">Destinatário:</label>
+            <input type="text" class="form-control" id="recipient-name" value="" disabled>
+          </div>
+          <div class="mb-2">
+            <label for="recipient-name" class="col-form-label">Data e hora:</label>
+            <input type="text" class="form-control" id="modal-date" value="" disabled>
+          </div>
+          <div class="mb-2">
+            <label for="message-text" class="col-form-label">Assunto do atendimento:</label>
+            <textarea class="form-control" id="message-text"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+          <button type="submit" class="btn btn-primary">Confirmar Agendamento</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="cancel-scheduling" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form class="cancel-scheduling">
+        <div class="modal-body">
+          Tem certeza que deseja cancelar o agendamento?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Não</button>
+          <button type="submit" class="btn btn-primary">Sim</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 
 {% endblock %}
 {% block 'scripts' %}
 
-
 <script>
+
+  $(document).ready(function () {
+    $('#calendar').evoCalendar({
+      theme: 'Midnight Blue',
+      language: 'pt',
+      calendarEvents: []
+    });
+
+
+    let discipline = `{{ discipline | safe }}`
+    let user = `{{ user | safe }}`
+    let userId = `{{ user_id | safe }}`
+    let tableData = `{{ time|safe }}`
+    let professor = `{{ professor|safe }}`
+
+
+    tableData = JSON.parse(tableData);
+
+
+    $.each(tableData, function (index, elem) {
+      var date = new Date(elem.date);
+
+      const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+
+      var badge;
+
+      if (elem.status === false) {
+        badge = 'Agendar horário';
+      } else if (elem.status === true && elem.student_id == userId) {
+        badge = 'Cancelar';
+      } else {
+        badge = null;
+      }
+
+      var event = {
+        id: elem.id,
+        name: elem.initial_time + ' - ' + elem.final_time,
+        date: monthNames[date.getMonth()] + '/' + String(date.getDate() + 1).padStart(2, '0') + '/' + String(date.getFullYear()),
+        badge: badge,
+        description: (function () {
+          if (elem.status === false) {
+            return ' ';
+          } else if (elem.student_id == userId) {
+            return 'Agendado por: ' + user;
+          } else {
+            return 'Horário já agendado';
+          }
+        })(),
+        type: elem.status === false ? 'holiday' : 'event',
+        everyYear: false,
+        status: elem.status
+      };
+
+      $('#calendar').evoCalendar('addCalendarEvent', [event]);
+
+    });
+
+    const parentElement = $('#calendar');
+
+    parentElement.on('click', '.show-modal', function () {
+
+      const divPai = $(this).closest('.event-container');
+      const divPaiEventId = divPai.data('event-index');
+
+      var resultadoFiltrado = $.grep(tableData, function (objeto) {
+        return objeto.id === divPaiEventId;
+      });
+
+      let modalObject = resultadoFiltrado[0]
+
+      if ($(this).data('scheduled') == false) {
+        $('#send-scheduling').modal('show');
+        $("#recipient-name").val(professor);
+
+        let modalDate = modalObject['date'] + " | " + modalObject['initial_time'] + " - " + modalObject['final_time']
+
+        $("#modal-date").val(modalDate);
+      }
+
+      else {
+        $('#cancel-scheduling').modal('show');
+      }
+
+      function sendScheduling(event, status) {
+        event.preventDefault();
+        console.log(status)
+        let formModalData = {
+          time_id: modalObject['id'],
+          status: status,
+          subject: modalObject['subject'],
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+        }
+
+
+        $.ajax({
+          type: 'POST',
+          url: `/save-scheduling/${formModalData['time_id']}/${formModalData['status']}/${formModalData['subject']}/`,
+          data: formModalData,
+          dataType: 'json',
+          success: function (response) {
+            window.location.reload();
+          }
+        });
+      }
+
+
+      $(".scheduling-form").submit(function (event) {
+        sendScheduling(event, true);
+      })
+
+      $(".cancel-scheduling").submit(function(event) {
+        sendScheduling(event, false);
+      })
+
+    })
+
+
+  })
+</script>
+
+<!--<script>
 
   $(document).ready(function () {
     
@@ -160,5 +334,5 @@
 
     });
   });
-</script>
+</script>-->
 {% endblock %}

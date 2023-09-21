@@ -36,7 +36,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .utils import generate_token
 from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
 from django.urls import reverse
-
+import json
+from django.http import HttpResponseRedirect
     
 def home(request):
    return render(request, 'home.html')
@@ -115,7 +116,7 @@ def discipline_register(request):
 def student_courses(request):
   if request.method == "GET":
     courses = Course.objects.all() 
-    paginator = Paginator(courses, 8)
+    paginator = Paginator(courses, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, "student-courses.html", {"courses": page_obj})
@@ -134,7 +135,7 @@ def disciplines_a(request):
 def courses_a(request):
   if request.method == "GET":
     courses = Course.objects.all() 
-    paginator = Paginator(courses, 8)
+    paginator = Paginator(courses, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     return render(request, "courses-a.html", {"courses": page_obj})
@@ -156,7 +157,8 @@ def student_disciplines(request, course_id):
   if request.method == "POST":
     course = Course.objects.get(id=course_id)
     disciplines = Discipline.objects.filter(courses=course)
-    return render(request, "student-disciplines.html", {"disciplines": disciplines})
+    
+    return render(request, "student-disciplines.html", {"disciplines": disciplines, "course": course})
 
 @login_required(login_url="/") 
 def professor_disciplines(request):
@@ -388,14 +390,38 @@ def excluir_horario(availability:Availability):
       retorno = True 
     return retorno
 
-def check_availability(request, discipline_id):
+def check_availability(request, discipline_id, course_id):
     professor = int(request.POST.get('professor'))
+    time = list(Time.objects.filter(discipline_id=discipline_id).values())
+    discipline = Discipline.objects.get(id=discipline_id)
+    t = time[0]['professor_id']
+    p = User.objects.get(id=t)
+    
     if professor == 0:
-      discipline = Discipline.objects.get(id=discipline_id)
-      return render(request, 'check-availability.html', {'id': request.user.id, 'first_name': request.user.first_name + " " + request.user.last_name, 'discipline': discipline})
+      context = {
+        'discipline': discipline,
+        'user_id': json.dumps(request.user.id, indent=4, sort_keys=True, default=str),
+        'user_name': json.dumps(request.user, indent=4, sort_keys=True, default=str),
+        'time': json.dumps(time, indent=4, sort_keys=True, default=str),
+        'professor': p
+      }
+      
+      #return render(request, 'check-availability.html', {'id': request.user.id, 'first_name': request.user.first_name + " " + request.user.last_name, 'discipline': discipline})
+      return render(request, 'check-availability.html', context)
     elif professor == 1:
        discipline = Discipline.objects.get(id=discipline_id)
        return render(request, 'check-availability-professor.html', {'id': request.user.id, 'first_name': request.user.first_name + " " + request.user.last_name, 'discipline': discipline})
+
+def save_scheduling(request, time_id, status, subject):
+  if request.method == "POST":
+    time = Time.objects.get(id=int(time_id))
+    time.status = True if status == "true" else False
+    time.subject = subject
+    time.student_id = request.user.id
+    time.save()
+    response_data = {'message': 'Requisição bem-sucedida'}
+    return JsonResponse(response_data, status=200)
+
 
 def professor_courses_card(request):
   if request.method == "GET":

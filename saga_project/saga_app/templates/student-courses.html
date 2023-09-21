@@ -42,18 +42,24 @@
         </div>-->
         <div class="row row-cols-1 row-cols-md-3 g-4">
           {% for course in courses %}
-          <div class="col">
-            <div class="card h-100">
-              {% if course.course_image %}
-              <img src="{{ course.course_image.url }}" class="card-img-top img-fluid p-0 m-0" alt="...">
-              {% else %}
-              <img src="{% static 'general/img/default_course.jpg' %}" class="card-img-top img-fluid p-0 m-0" alt="">
-              {% endif %}
-              <div class="card-body">
-                <h5 class="card-title text-center">{{ course.name }}</h5>
+          <form action="{% url 'student-disciplines' course.id %}" method="post">
+            {% csrf_token %}
+            <div class="col">
+              <div class="card h-100">
+                <button style="border: none;">
+                  {% if course.course_image %}
+                  <img src="{{ course.course_image.url }}" class="card-img-top img-fluid p-0 m-0" alt="...">
+                  {% else %}
+                  <img src="{% static 'general/img/default_course.jpg' %}" class="card-img-top img-fluid p-0 m-0"
+                    alt="">
+                  {% endif %}
+                  <div class="card-body">
+                    <h5 class="card-title text-center">{{ course.name }}</h5>
+                  </div>
               </div>
+              </button>
             </div>
-          </div>
+          </form>
           {% endfor %}
         </div>
       </div>

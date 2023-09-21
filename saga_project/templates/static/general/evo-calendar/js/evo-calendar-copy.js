@@ -615,7 +615,7 @@
     // v1.0.0 - Build Event: Event list
     EvoCalendar.prototype.buildEventList = function() {
         var _ = this, markup, hasEventToday = false;
-        
+
         _.$active.events = [];
         // Event date
         var title = _.formatDate(_.$active.date, _.options.eventHeaderFormat, _.options.language);
@@ -659,6 +659,7 @@
 
     // v1.0.0 - Add single event to event list
     EvoCalendar.prototype.addEventList = function(event_data) {
+
         var _ = this, markup;
         var eventListEl = _.$elements.eventEl.find('.event-list');
         if (eventListEl.find('[data-event-index]').length === 0) eventListEl.empty();
@@ -669,7 +670,7 @@
             markup += 'style="background-color:'+event_data.color+'"'
         }
         markup += '></div></div><div class="event-info"><p class="event-title">'+_.limitTitle(event_data.name);
-        if (event_data.badge) markup += '<span class="show-modal" data-scheduled="'+event_data.status+'">'+event_data.badge+'</span>';
+        if (event_data.badge) markup += '<span data-bs-toggle="modal" data-bs-target="'+ event_data.status == false ? '#send-scheduling' : '#cancel-scheduling' +'" data-bs-whatever="@mdo" data-scheduled="'+event_data.status+'" data-student-id="null" data-student-name="null" data-event-id="'+event_data.id+'"  class="get-username">'+event_data.badge+'</span>';
         markup += '</p>'
         if (event_data.description) markup += '<p class="event-desc">'+event_data.description+'</p>';
         markup += '</div>';
@@ -680,6 +681,9 @@
         .off('click.evocalendar')
         .on('click.evocalendar', _.selectEvent);
     }
+
+    
+
     // v1.0.0 - Remove single event to event list
     EvoCalendar.prototype.removeEventList = function(event_data) {
         var _ = this, markup;
@@ -1128,3 +1132,4 @@
     };
 
 }));
+

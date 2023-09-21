@@ -40,7 +40,7 @@
                         {% csrf_token %}
                         <button type="submit" class="btn bg-danger btn-delete" style="color: white">Excluir</button>
                       </form>
-                      <form action="{% url 'check-availability' discipline.id %}" method="POST">
+                      <form action="/check-availability/{{discipline.id}}/{{course.id}}/" method="POST">
                         {% csrf_token %}
                         <input type="hidden" class="form-check-input" name="disciplina_id" value="{{discipline.id}}">
                         <input type="hidden" class="form-check-input" name="register_availability" value="0">

@@ -17,7 +17,7 @@ urlpatterns = [
     path('update/', views.update, name='update'),
     path('remove/', views.remove, name='remove'),
     path('profile/', views.profile, name="profile"),
-    path('check-availability/<int:discipline_id>/', views.check_availability, name='check-availability'),
+    path('check-availability/<int:discipline_id>/<int:course_id>/', views.check_availability, name='check-availability'),
     path('send-availability-to-students/<int:discipline_id>', views.send_availability_to_students, name="send-availability-to-students"),
     path('get-username', views.get_username, name='get-username'),
     path('discipline-delete/<int:discipline_id>', views.discipline_delete, name='discipline-delete'),
@@ -37,4 +37,5 @@ urlpatterns = [
     path('professor-courses-card', views.professor_courses_card, name='professor-courses-card'),
     path('email/', views.testa_email, name='email'), #teste email
     path('activate-user/<uidb64>/<token>', views.activate_user, name='activate'),
+    path('save-scheduling/<time_id>/<status>/<subject>/', views.save_scheduling, name='save-scheduling')
 ]

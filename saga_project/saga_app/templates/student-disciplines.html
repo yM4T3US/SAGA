@@ -34,8 +34,8 @@
                     <td>{{discipline.year}}</td>
                     <td>{{discipline.semester}}</td>
                     <td>
-                        <form action="{% url 'check-availability' discipline.id %}" method="post">
-                          {% csrf_token %}
+                      <form action="/check-availability/{{ discipline.id }}/{{ course.id }}/" method="post">
+                        {% csrf_token %}
                         <input type="hidden" class="form-check-input" name="disciplina_id" value="{{discipline.id}}">
                         {% if user.professor %}
                         <input type="hidden" class="form-check-input" name="professor" value="1">
