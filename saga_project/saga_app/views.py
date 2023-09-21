@@ -36,14 +36,8 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .utils import generate_token
 from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
 from django.urls import reverse
-<<<<<<< HEAD
 import json
 from django.http import HttpResponseRedirect
-=======
-from django.contrib.auth.hashers import make_password
-
-
->>>>>>> efe9a086c2dac03640e722eaed7f2f321c68055c
     
 def home(request):
    return render(request, 'home.html')
