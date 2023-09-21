@@ -36,8 +36,14 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .utils import generate_token
 from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
 from django.urls import reverse
+<<<<<<< HEAD
 import json
 from django.http import HttpResponseRedirect
+=======
+from django.contrib.auth.hashers import make_password
+
+
+>>>>>>> efe9a086c2dac03640e722eaed7f2f321c68055c
     
 def home(request):
    return render(request, 'home.html')
@@ -59,7 +65,8 @@ def login(request):
       else:
         return HttpResponse("Email do usuario não verificado!")
      else:
-      return HttpResponse("Usuário ou senha inválidos")
+      messages.error(request, "Usuario ou senha invalidos!")
+      return render(request, 'login.html')
      
 def logout(request):
   logout_django(request)
@@ -523,35 +530,50 @@ def update_scheduled_time(request):
         name_student = student.first_name + ' ' + student.last_name
         horario = time.initial_time.strftime("%H:%M") + ' à ' + time.final_time.strftime("%H:%M")
         data = time.date.strftime("%d/%m/%Y")
-        
+
         if scheduled == False: #cancela agendamento
           time.status = False
           time.student = None
           assunto = 'Agendamento SAGA cancelado'
           #email professor
-          corpo = 'O agendamento do dia ' + data + ' no horario: ' + horario + ' foi cancelado pelo aluno: ' + name_student + '.'
-          envia_email(assunto, corpo, email_professor) 
+          email_body = render_to_string('cancel-professor.html', {
+          'name_student': name_student,
+          'name_professor': name_professor,
+          'date': data,
+          'horario': horario})
+          envia_email(assunto, email_body, email_professor) 
           #email aluno
-          corpo = 'Você cancelou o agendamento do dia ' + data + ' no horario: ' + horario + ' com o professor ' + name_professor
-          envia_email(assunto, corpo, email_student) 
+          email_body = render_to_string('cancel-student.html', {
+          'name_student': name_student,
+          'name_professor': name_professor,
+          'date': data,
+          'horario': horario})
+          envia_email(assunto, email_body, email_student) 
 
         else: #realiza agendamento
           time.status = True
           time.student = student
           assunto = 'Novo agendamento no SAGA'
           #email professor
-          corpo = 'O aluno: ' + name_student + ' realizou um agendamento de atendimento no dia:  ' + data + ' no seguinte horario: ' + horario
-          envia_email(assunto, corpo, email_professor)
+          email_body = render_to_string('student-schedule.html', {
+          'name_student': name_student,
+          'name_professor': name_professor,
+          'date': data,
+          'horario': horario})
+          envia_email(assunto, email_body, email_student)
           #email aluno
-          corpo = 'Você realizou um agendamento de atendimento no dia:  ' + data + ' no seguinte horario: ' + horario + ' com o professor ' + name_professor
-          envia_email(assunto, corpo, email_student)          
+          email_body = render_to_string('professor-schedule.html', {
+          'name_student': name_student,
+          'name_professor': name_professor,
+          'date': data,
+          'horario': horario})
+          envia_email(assunto, email_body, email_student)      
 
         time.save()
 
         return JsonResponse({'status': 'success'})
     else:
         return JsonResponse({'status': 'error'})
-
 
 
 def professor_register(request):
@@ -572,7 +594,7 @@ def envia_email(assunto, corpo, destinatarios): # Envia email
 def send_activation_email(user, request):  # envai email de ativação
   current_site = get_current_site(request)
   email_subject = 'Ative sua conta'
-  email_body = render_to_string('authentication/activate.html', {
+  email_body = render_to_string('activate.html', {
       'user': user,
       'domain': current_site,
       'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -582,26 +604,91 @@ def send_activation_email(user, request):  # envai email de ativação
   envia_email(email_subject,email_body,[user.email])
 
 
+
 def activate_user(request, uidb64, token):
   try:
-      uid = str(urlsafe_base64_decode(uidb64))
-      user = User.objects.get(pk=uid)
-
+    uid = urlsafe_base64_decode(uidb64)
+    user = User.objects.get(pk=uid)
   except Exception as e:
-      user = None
+    user = None
 
+  if user.is_email_verified == True:
+    messages.add_message(request, messages.SUCCESS, 'Email já verificado! Realize o login.')   
+    return redirect(reverse('login'))
+  
   if user and generate_token.check_token(user, token):
-      user.is_email_verified = True
-      user.save()
+    print("Entrou no IF")
+    user.is_email_verified = True
+    user.save()
+    messages.add_message(request, messages.SUCCESS, 'Email verificado com sucesso! Você já pode fazer login.')   
+    return redirect(reverse('login'))    
+  else:
+    return render(request, 'activate-failed.html', {"user": user})
 
-      messages.add_message(request, messages.SUCCESS,
-                             'Email verificado! Você pode fazer login')
-      return redirect(reverse('login'))
-      
-  
-  return render(request, 'activate-failed.html', {"user": user})
-  
+#esqueci minha senha - usar mesma logica da ativação do usuario- criar view que recebe a info do email e verifica a existencia
+# disparar o mesmo semelhante ao email de ativação aontando para uma view que valide o token e abra uma page passando o usuario com os campos para troca de senha
+# vericar antes no git se tem algo padrao do DJANGO   
 
-      
-      
-       
+def reset_password(request): #pagina de redefinição
+  if request.method == "GET":
+    return render(request, 'reset_password.html')
+  else:
+    return render(request, 'login.html')
+
+@require_http_methods(["POST"]) 
+def send_reset_password(request): #envia redefinição
+  if request.method == "GET":
+    return render(request, 'reset_password.html')
+  else:
+    email = request.POST.get('email')
+    user = User.objects.filter(email=email)
+    if user:
+      user = User.objects.get(email=email)
+      current_site = get_current_site(request)
+      email_subject = 'Redefinição de senha SAGA'
+      email_body = render_to_string('reset_email_password.html', {
+      'user': user,
+      'domain': current_site,
+      'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+      'token': generate_token.make_token(user)
+      })
+
+      envia_email(email_subject,email_body,[user.email])
+      messages.success(request, "Confira em seu email as instruções para redefinição de senha")
+      return render(request, "login.html")
+
+    else:
+      messages.error(request, "Usuario não localizado, crie o seu cadastro para fazer login")
+      return redirect('signup')
+
+def redefine_pass_user(request,uidb64, token): # valida link da redefinição de senha 
+  try:
+    uid = urlsafe_base64_decode(uidb64)
+    user = User.objects.get(pk=uid)
+  except Exception as e:
+    user = None
+  
+  if user and generate_token.check_token(user, token):
+    token = generate_token.make_token(user)
+    return render(request, 'new_pass.html', {"user": user, "token" : token })  
+   
+  else:
+    messages.error(request, "Link de redefinição invalido!")
+    return render(request, 'login.html')
+  
+  
+def new_pass(request, id_user, token):     #redefine senha
+  if request.method == "GET":
+   return render(request, 'login.html')
+  else:
+    user = User.objects.get(id=id_user)
+    if user and generate_token.check_token(user, token):
+      new_password  = make_password(request.POST.get('password'))
+      user.password = new_password
+      user.save()   
+      messages.success(request, "Senha redefinida com sucesso!")
+      return render(request, 'login.html')
+    else:
+      messages.error(request, "Link de redefinição invalido!")
+      return render(request, 'login.html')
+  
