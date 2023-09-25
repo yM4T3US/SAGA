@@ -38,6 +38,7 @@ from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeErr
 from django.urls import reverse
 import json
 from django.http import HttpResponseRedirect
+from django.contrib.auth.hashers import make_password
     
 def home(request):
    return render(request, 'home.html')
