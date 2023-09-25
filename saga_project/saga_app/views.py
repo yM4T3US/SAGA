@@ -418,8 +418,11 @@ def save_scheduling(request, time_id, status, subject):
   if request.method == "POST":
     time = Time.objects.get(id=int(time_id))
     time.status = True if status == "true" else False
+    if time.status == False:
+      time.student_id = None
+    else:
+      time.student_id = request.user.id
     time.subject = subject
-    time.student_id = request.user.id
     time.save()
     response_data = {'message': 'Requisição bem-sucedida'}
     return JsonResponse(response_data, status=200)
