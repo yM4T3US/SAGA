@@ -417,12 +417,59 @@ def check_availability(request, discipline_id, course_id):
 def save_scheduling(request, time_id, status, subject):
   if request.method == "POST":
     time = Time.objects.get(id=int(time_id))
+    time.subject = subject
+    #info email
+    professor = User.objects.get(id=time.professor_id)
+    student = User.objects.get(id=request.user.id)
+    email_professor = [professor.email]
+    email_student = [student.email]
+    name_professor = professor.first_name + ' ' + professor.last_name
+    name_student = student.first_name + ' ' + student.last_name
+    horario = time.initial_time.strftime("%H:%M") + ' à ' + time.final_time.strftime("%H:%M")
+    data = time.date.strftime("%d/%m/%Y")
+    assunto_atendimento = subject
+    #fim info email
     time.status = True if status == "true" else False
     if time.status == False:
       time.student_id = None
+      #email professor
+      assunto = 'Agendamento SAGA cancelado'
+      email_body = render_to_string('cancel-professor.html', {
+      'name_student': name_student,
+      'name_professor': name_professor,
+      'date': data,
+      'assunto_atendimento' : assunto_atendimento,
+      'horario': horario})
+      envia_email(assunto, email_body, email_professor) 
+      #email aluno
+      email_body = render_to_string('cancel-student.html', {
+      'name_student': name_student,
+      'name_professor': name_professor,
+      'date': data,
+      'assunto_atendimento' : assunto_atendimento,
+      'horario': horario})
+      envia_email(assunto, email_body, email_student) 
+
     else:
       time.student_id = request.user.id
-    time.subject = subject
+      assunto = 'Novo agendamento no SAGA'
+      #email professor
+      email_body = render_to_string('student-schedule.html', {
+      'name_student': name_student,
+      'name_professor': name_professor,
+      'date': data,
+      'assunto_atendimento' : assunto_atendimento,
+      'horario': horario})
+      envia_email(assunto, email_body, email_student)
+      #email aluno
+      email_body = render_to_string('professor-schedule.html', {
+      'name_student': name_student,
+      'name_professor': name_professor,
+      'date': data,
+      'assunto_atendimento' : assunto_atendimento,
+      'horario': horario})
+      envia_email(assunto, email_body, email_student)   
+
     time.save()
     response_data = {'message': 'Requisição bem-sucedida'}
     return JsonResponse(response_data, status=200)
