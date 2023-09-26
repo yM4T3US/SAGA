@@ -155,9 +155,11 @@
         let formModalData = {
           time_id: modalObject['id'],
           status: status,
-          subject: modalObject['subject'],
+          subject: $('#message-text').val(),
           csrfmiddlewaretoken: '{{ csrf_token }}'
         }
+
+        console.log(formModalData.subject)
 
 
         $.ajax({

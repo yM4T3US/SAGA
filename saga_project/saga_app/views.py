@@ -354,7 +354,7 @@ def gerar_horario(availability:Availability,dia_semana,usuario_logado:User, disc
               datetime_ini_ant = datetime_ini #salva a hora antes do encremento 
               datetime_ini += timedelta(minutes=availability.duration) #encrementa a hora 
               if datetime_ini <= datetime_fin:
-                new_time = Time(date=data_teste, initial_time=datetime_ini_ant.time(), final_time=datetime_ini.time(), status=False, subject="Livre", professor=usuario_logado, discipline=disciplina)       #cria o registro     
+                new_time = Time(date=data_teste, initial_time=datetime_ini_ant.time(), final_time=datetime_ini.time(), status=False, subject="", professor=usuario_logado, discipline=disciplina)       #cria o registro     
                 new_time.save()
       data_teste = data_teste + timedelta(days=1)
       retorno = True
