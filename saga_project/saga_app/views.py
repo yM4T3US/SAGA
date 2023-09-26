@@ -7,37 +7,29 @@ from django.contrib.auth import authenticate, logout as logout_django, login as 
 from django.contrib.auth.decorators import login_required
 from rolepermissions.decorators import has_role_decorator
 from django.shortcuts import redirect
-from django.conf import settings
 from rolepermissions.roles import assign_role
 from .roles import *
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from datetime import date, datetime
-from django.utils import timezone
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
-from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage
-from django.conf import settings
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+#from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
 from datetime import timedelta
-from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .utils import generate_token
-from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
+from django.utils.encoding import force_bytes
 from django.urls import reverse
 import json
-from django.http import HttpResponseRedirect
 from django.contrib.auth.hashers import make_password
     
 def home(request):
@@ -561,7 +553,7 @@ def availability(request):
         return HttpResponse("Não foi possivel criar registros no tabela Time, Verifique conflitos de agenda")
 
 
-@csrf_exempt
+'''@csrf_exempt
 def update_scheduled_time(request):
     if request.method == 'POST':
         scheduled = False if (request.POST.get('scheduled')) == 'false' else True
@@ -619,7 +611,7 @@ def update_scheduled_time(request):
 
         return JsonResponse({'status': 'success'})
     else:
-        return JsonResponse({'status': 'error'})
+        return JsonResponse({'status': 'error'})'''
 
 
 def professor_register(request):
