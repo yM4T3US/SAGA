@@ -418,6 +418,7 @@ def save_scheduling(request, time_id, status, subject):
   if request.method == "POST":
     time = Time.objects.get(id=int(time_id))
     time.subject = subject
+
     #info email
     professor = User.objects.get(id=time.professor_id)
     student = User.objects.get(id=request.user.id)

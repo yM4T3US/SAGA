@@ -136,31 +136,34 @@
 
       let modalObject = resultadoFiltrado[0]
 
+      let subject;
+
       if ($(this).data('scheduled') == false) {
         $('#send-scheduling').modal('show');
         $("#recipient-name").val(professor);
-
+        
         let modalDate = modalObject['date'] + " | " + modalObject['initial_time'] + " - " + modalObject['final_time']
 
         $("#modal-date").val(modalDate);
+  
       }
 
       else {
         $('#cancel-scheduling').modal('show');
+        
       }
 
-      function sendScheduling(event, status) {
+      function sendScheduling(event, subject, status) {
         event.preventDefault();
         console.log(status)
         let formModalData = {
           time_id: modalObject['id'],
           status: status,
-          subject: $('#message-text').val(),
+          subject: subject,
           csrfmiddlewaretoken: '{{ csrf_token }}'
         }
 
         console.log(formModalData.subject)
-
 
         $.ajax({
           type: 'POST',
@@ -175,11 +178,11 @@
 
 
       $(".scheduling-form").submit(function (event) {
-        sendScheduling(event, true);
+        sendScheduling(event, $("#message-text").val(), true);
       })
 
       $(".cancel-scheduling").submit(function(event) {
-        sendScheduling(event, false);
+        sendScheduling(event, "livre", false);
       })
 
     })
