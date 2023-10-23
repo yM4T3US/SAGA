@@ -453,7 +453,7 @@ def save_scheduling(request, time_id, status, subject):
       'date': data,
       'assunto_atendimento' : assunto_atendimento,
       'horario': horario})
-      envia_email(assunto, email_body, email_student)
+      envia_email(assunto, email_body, email_professor)
       #email aluno
       email_body = render_to_string('professor-schedule.html', {
       'name_student': name_student,
