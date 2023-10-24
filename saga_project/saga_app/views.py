@@ -618,12 +618,6 @@ def professor_register(request):
   if request.method == "GET":
     return render(request, 'professor-register.html')
   
-def testa_email(request): # teste de email
-  destinatario = ['rafaelborille@hotmail.com']
-  assunto = 'teste de email SAGA'
-  corpo = 'Confirmação de agendamento do Saga'
-  email = envia_email(assunto, corpo, destinatario)
-  return HttpResponse("Olá email")
 
 
 def envia_email(assunto, corpo, destinatarios): # Envia email
