@@ -6,7 +6,6 @@ from django.contrib.auth import authenticate, logout as logout_django, login as 
 from django.contrib.auth.decorators import login_required
 from rolepermissions.decorators import has_role_decorator
 from django.shortcuts import redirect
-from django.conf import settings
 from rolepermissions.roles import assign_role
 from .roles import *
 from django.core.paginator import Paginator
@@ -20,14 +19,14 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+#from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
 from datetime import timedelta
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .utils import generate_token
+from django.utils.encoding import force_bytes
 from django.urls import reverse
 import json
 from django.contrib.auth.hashers import make_password
@@ -443,7 +442,7 @@ def save_scheduling(request, time_id, status, subject):
       'date': data,
       'assunto_atendimento' : assunto_atendimento,
       'horario': horario})
-      envia_email(assunto, email_body, email_student)
+      envia_email(assunto, email_body, email_professor)
       #email aluno
       email_body = render_to_string('professor-schedule.html', {
       'name_student': name_student,
@@ -543,7 +542,7 @@ def availability(request):
         return HttpResponse("Não foi possivel criar registros no tabela Time, Verifique conflitos de agenda")
 
 
-@csrf_exempt
+'''@csrf_exempt
 def update_scheduled_time(request):
     if request.method == 'POST':
         scheduled = False if (request.POST.get('scheduled')) == 'false' else True
@@ -601,19 +600,13 @@ def update_scheduled_time(request):
 
         return JsonResponse({'status': 'success'})
     else:
-        return JsonResponse({'status': 'error'})
+        return JsonResponse({'status': 'error'})'''
 
 
 def professor_register(request):
   if request.method == "GET":
     return render(request, 'professor-register.html')
   
-def testa_email(request): # teste de email
-  destinatario = ['rafaelborille@hotmail.com']
-  assunto = 'teste de email SAGA'
-  corpo = 'Confirmação de agendamento do Saga'
-  email = envia_email(assunto, corpo, destinatario)
-  return HttpResponse("Olá email")
 
 
 def envia_email(assunto, corpo, destinatarios): # Envia email
