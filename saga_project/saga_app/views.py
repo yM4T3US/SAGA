@@ -34,6 +34,7 @@ from django.contrib.auth.hashers import make_password
 def home(request):
    return render(request, 'home.html')
 
+
 def login(request):  
    if request.method == "GET":
     return render(request, 'login.html')
@@ -367,6 +368,7 @@ def excluir_horario(availability:Availability):
     return retorno
 
 def check_availability(request, discipline_id, course_id):
+
     professor = int(request.POST.get('professor'))
     time = Time.objects.filter(discipline_id=discipline_id).values()
     time_distinct = time.values('professor_id').distinct()
@@ -378,8 +380,6 @@ def check_availability(request, discipline_id, course_id):
     time = list(time)
     discipline = Discipline.objects.get(id=discipline_id)
 
-    print(professores)
-    
     if professor == 0:
       context = {
         'discipline': discipline,

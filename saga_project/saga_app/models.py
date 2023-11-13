@@ -27,8 +27,10 @@ class User(AbstractUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
-    def __str__(self) -> str:
-        return super().__str__()
+    def __str__(self):
+        # Usando vars() para obter um dicionário dos atributos e seus valores
+        atributos = vars(self)
+        return str(atributos)
     
     def create_user(self, email, password=None, **extra_fields):
         if not email:
