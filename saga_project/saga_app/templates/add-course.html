@@ -9,7 +9,7 @@
 
 {% block 'dinamic-content' %}
 <main>
-  <section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="container mt-md-5">
+  <section style="font-family: Arial, Helvetica, sans-serif;" class="mt-5 rounded-4 rounded-md-5 rounded-display-courses rounded-display container-fluid text-white">
     {% include 'messages.html' %}
     <form action="{% url 'add-course' %}" id="course-form" enctype="multipart/form-data" method="post">
       {% csrf_token %}
@@ -27,17 +27,17 @@
                 <input type="file" class="form-control" name="course-image" id="image-input" accept="image/*">
               </div>
             </div>
-            <div class="form-floating mb-2">
+            <div class="form-floating mb-3">
               <input value="{{ course.name.url }}" type="text" class="form-control autocomplete"
                 id="floating-input-email" name="course-name" autocomplete="off">
               <label for="floatingInput"><span style="color: #999999;">Nome do curso</span></label>
             </div>
           </div>
-          <div>
-            <button type="submit" class="btn mt-3 w-100" style="background-color: #00510F; color: white;"
-              id="send">Cadastrar
-            </button>
-          </div>
+          <div class="row justify-content-center">
+            <div class="col-6 mb-4">
+              <button type="submit" class="btn btn-md w-100"
+                style="background-color: #00510F; color: white;" id="send">Cadastrar</button>
+            </div>
         </div>
       </div>
     </form>

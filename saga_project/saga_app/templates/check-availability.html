@@ -76,7 +76,8 @@
     let user = `{{ user | safe }}`
     let userId = `{{ user_id | safe }}`
     let tableData = `{{ time|safe }}`
-    let professor = `{{ professor|safe }}`
+    let professores = `{{ professores|safe }}`
+    console.log(professores)
 
 
     tableData = JSON.parse(tableData);
@@ -100,6 +101,8 @@
         badge = null;
       }
 
+      
+
       var event = {
         id: elem.id,
         name: elem.initial_time + ' - ' + elem.final_time,
@@ -109,7 +112,7 @@
           if (elem.status === false) {
             return ' ';
           } else if (elem.student_id == userId) {
-            return 'Agendado por: ' + user;
+            return 'Agendado por: ' + user + 'Professor: ' + elem.professor;
           } else {
             return 'Horário já agendado';
           }
@@ -140,7 +143,7 @@
 
       if ($(this).data('scheduled') == false) {
         $('#send-scheduling').modal('show');
-        $("#recipient-name").val(professor);
+        $("#recipient-name").val(elem.professor);
         
         let modalDate = modalObject['date'] + " | " + modalObject['initial_time'] + " - " + modalObject['final_time']
 

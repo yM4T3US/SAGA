@@ -14,36 +14,36 @@
 
 {% block 'dinamic-content' %}
 <main>
-  <section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="container mt-md-5">
-    <div class="container">
-      <h1 class="text-center">Selecione o curso para cadastrar a disponibilidade</h1>
-      <div class="container" style="margin-top: 2vmax;">
+  <section style="font-family: Arial, Helvetica, sans-serif;"
+    class="mt-5 rounded-4 rounded-md-5 rounded-display-courses rounded-display container-fluid">
+    <div class="row py-3">
+      <div class="col-12">
+        <h1 class="display-6 fw-bold text-center mb-4">Selecione o curso para cadastrar a disponibilidade</h1>
         <div class="row row-cols-1 row-cols-md-3 g-4">
           {% for course in courses %}
           <form action="{% url 'disciplines-a' %}" method="post">
             {% csrf_token %}
             <div class="col">
-                <div class="card h-100">
-                  <button type="submit" style="border: none">
-                    {% if course.course_image %}
-                      <img src="{{ course.course_image.url }}" class="card-img-top img-fluid p-0 m-0" alt="...">
-                    {% else %}
-                      <img src="{% static 'general/img/default_course.jpg' %}" class="card-img-top img-fluid p-0 m-0" alt="">
-                    {% endif %}
-                    <div class="card-body">
-                      <h5 class="card-title text-center">{{ course.name }}</h5>
-                      <input type="hidden" name="course-id" value="{{course.id}}">
-                    </div>
+              <div class="card h-100">
+                <button type="submit" style="border: none">
+                  {% if course.course_image %}
+                  <img src="{{ course.course_image.url }}" class="card-img-top img-fluid p-0 m-0" alt="...">
+                  {% else %}
+                  <img src="{% static 'general/img/default_course.jpg' %}" class="card-img-top img-fluid p-0 m-0"
+                    alt="">
+                  {% endif %}
+                  <div class="card-body">
+                    <h5 class="card-title text-center">{{ course.name }}</h5>
+                    <input type="hidden" name="course-id" value="{{course.id}}">
                   </div>
-                </button>
+              </div>
+              </button>
             </div>
           </form>
           {% endfor %}
         </div>
       </div>
     </div>
-    </div>
-
     <!--Pagination-->
     <!--<div class="container p-4">
     <div class="pagination justify-content-center">

@@ -1,9 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Play:wght@700&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,600;1,700&family=Roboto:wght@900&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   text-decoration: none;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.main-panel {
+  background-color: #0ca12f2b;
+  color: white;
+  margin: 10vh 10vw;
+}
+   
+p {
+  color: white;
+  text-align: justify;
+  line-height: 1.5;
+}
+
+.card:hover {
+  cursor: pointer;
+}
+
+.rounded-display { 
+  background-color: #0CA12F;
+  width: 75vw;
+}
+
+.rounded-display-courses {
+  background-color: #0ca12f2b;
+  padding: 1vw 5vw;
 }
 
 #navbar {
@@ -151,6 +179,7 @@ color: white;
 .dragging {
   opacity: 0.5;
 }
+
 
 
 

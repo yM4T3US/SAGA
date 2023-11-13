@@ -28,7 +28,7 @@ class User(AbstractUser, PermissionsMixin):
     REQUIRED_FIELDS = []
 
     def __str__(self) -> str:
-        return self.first_name 
+        return super().__str__()
     
     def create_user(self, email, password=None, **extra_fields):
         if not email:
@@ -37,10 +37,6 @@ class User(AbstractUser, PermissionsMixin):
         user.set_password(password)
         user.save(using = self.db)
         return user
-    
-
-
-
 
 class Discipline(models.Model):
     name = models.CharField(max_length=50)

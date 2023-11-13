@@ -9,21 +9,18 @@
 
 {% block 'dinamic-content' %}
 <main>
-  <section style="font-family: Arial, Helvetica, sans-serif;" id="display-login" class="container mt-md-5">
-    
-
-      <div class="container">
+  <section class="rounded-4 main-panel mt-5 rounded-4 rounded-md-5 rounded-display-courses rounded-display container-fluid">
         <h1 class="text-center">Disciplinas do curso: {{course.name}}</h1>
         <h4 class="text-center">Selecione a disciplina para agendar um horário</h4>
-        <div>
-          <table class="table table-striped table-hover table-bordered table-light mt-3" id="discipline-table">
+        <div class="table-responsive-sm">
+          <table class="table table-sm table-striped table-hover table-bordered table-light mt-3" id="discipline-table">
             <thead>
               <tr>
-                <th scope="col">Id</th>
+                <th scope="col" class="text-center">Id</th>
                 <th scope="col">Disciplinas</th>
-                <th scope="col">Ano</th>
-                <th scope="col">Semestre</th>
-                <th scope="col">Selecionar</th>
+                <th scope="col" class="text-center" style="width: 100px;">Ano</th>
+                <th scope="col" class="text-center" style="width: 50px;">Semestre</th>
+                <th scope="col" style="width: 100px;"></th>
               </tr>
             </thead>
             <tbody>
@@ -31,8 +28,8 @@
                   <tr>
                     <td>{{discipline.id}}</td>
                     <td>{{discipline}}</td>
-                    <td>{{discipline.year}}</td>
-                    <td>{{discipline.semester}}</td>
+                    <td class="text-center">{{discipline.year}}</td>
+                    <td class="text-center">{{discipline.semester}}</td>
                     <td>
                       <form action="/check-availability/{{ discipline.id }}/{{ course.id }}/" method="post">
                         {% csrf_token %}
@@ -42,7 +39,11 @@
                         {% else %}
                         <input type="hidden" class="form-check-input" name="professor" value="0">
                         {% endif %}
-                        <button type="submit" class="btn" style="background-color: #00510F; color: white; margin-right: 0;">Selecionar</button>
+                        <div class="row justify-content-center">
+                          <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-sm" style="background-color: #00510F; color: white;">Selecionar</button>
+                          </div>
+                        </div>
                         </form> 
                     </td>
                   </tr>      
@@ -50,11 +51,7 @@
             </tbody>
           </table> 
         </div>
-      </div>
-
-      </div>
-    <!--</form>-->
-
+      
   </section>
 </main>
 {% endblock %}

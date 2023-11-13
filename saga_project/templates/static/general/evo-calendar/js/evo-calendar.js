@@ -211,7 +211,7 @@
                 activeYearEl: null
             }
             _.$breakpoints = {
-                tablet: 768,
+                tablet: 1200,
                 mobile: 425
             }
             _.$UI = {

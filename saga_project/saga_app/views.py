@@ -1,4 +1,3 @@
-
 from django.shortcuts import render
 from django.http import HttpResponse
 from .models import User, Course, Discipline, Availability, Time
@@ -13,37 +12,30 @@ from .roles import *
 from django.core.paginator import Paginator
 from django.http import JsonResponse
 from datetime import date, datetime
-from django.utils import timezone
 from django.core.mail import send_mail
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
-from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import EmailMessage
-from django.conf import settings
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
 from datetime import timedelta
-from PIL import Image
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.mail import send_mail
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from .utils import generate_token
-from django.utils.encoding import force_bytes, force_str, DjangoUnicodeDecodeError
 from django.urls import reverse
 import json
-from django.http import HttpResponseRedirect
 from django.contrib.auth.hashers import make_password
     
 def home(request):
    return render(request, 'home.html')
 
-def login(request):
+def login(request):  
    if request.method == "GET":
     return render(request, 'login.html')
    else:
@@ -66,15 +58,10 @@ def login(request):
 def logout(request):
   logout_django(request)
   return render(request, 'login.html')
-
-'''@login_required(login_url="/")
-def plataform(request):
-    if request.user.is_authenticated:
-      return render(request, 'courses.html')'''
     
 def sign_up(request):
    if request.method == "GET":
-    return render(request, 'cadastro.html')
+    return render(request, 'signup.html')
    else:
       first_name = request.POST.get('first-name')
       last_name = request.POST.get('last-name')
@@ -100,18 +87,6 @@ def discipline_register(request):
       courses = Course.objects.all()
       return render(request, 'discipline-register.html', {"courses": courses})
     else:
-      '''discipline_name = request.POST.get('discipline-name')
-      access_key = request.POST.get('access-key')
-      year = request.POST.get('year')
-      semester = request.POST.get('semester')
-      discipline = Discipline(name=discipline_name, access_key=access_key,semester=semester)
-      discipline.save()
-      courses_ids = request.POST.getlist('boxes') 
-      for i in range(len(courses_ids)):
-        courses_ids[i] = Course.objects.get(id=courses_ids[i])
-        discipline.courses.add(courses_ids[i])
-      discipline.save()
-      messages.success(request, "Disciplina cadastrada com sucesso!")'''
       return redirect('discipline-register')
 
 @login_required(login_url="/")
@@ -175,7 +150,7 @@ def add_discipline(request):
       discipline_name = request.POST.get('discipline-name')
       access_key = request.POST.get('access-key')
       semester = request.POST.get('semester')
-      professor = request.user
+      professor = request.user.first_name
       discipline = Discipline(name=discipline_name, access_key=access_key,semester=semester)
       discipline.save()
       discipline.professor.add(professor)
@@ -394,18 +369,25 @@ def excluir_horario(availability:Availability):
 
 def check_availability(request, discipline_id, course_id):
     professor = int(request.POST.get('professor'))
-    time = list(Time.objects.filter(discipline_id=discipline_id).values())
+    time = Time.objects.filter(discipline_id=discipline_id).values()
+    time_distinct = time.values('professor_id').distinct()
+    ids_professores = set(professor_d['professor_id'] for professor_d in time_distinct) #monta conjunto de ids dos professores
+    if professor == 1:
+      professores = list(User.objects.filter(id = request.user.id))
+    else: 
+      professores = list(User.objects.filter(id__in=ids_professores))
+    time = list(time)
     discipline = Discipline.objects.get(id=discipline_id)
-    t = time[0]['professor_id']
-    p = User.objects.get(id=t)
+
+    print(professores)
     
     if professor == 0:
       context = {
         'discipline': discipline,
         'user_id': json.dumps(request.user.id, indent=4, sort_keys=True, default=str),
-        'user_name': json.dumps(request.user, indent=4, sort_keys=True, default=str),
+        'user_name': json.dumps(request.user.first_name, indent=4, sort_keys=True, default=str),
         'time': json.dumps(time, indent=4, sort_keys=True, default=str),
-        'professor': p
+        'professores': json.dumps(professores, indent=4, sort_keys=True, default=str)
       }
       
       #return render(request, 'check-availability.html', {'id': request.user.id, 'first_name': request.user.first_name + " " + request.user.last_name, 'discipline': discipline})
@@ -693,7 +675,7 @@ def send_reset_password(request): #envia redefinição
       current_site = get_current_site(request)
       email_subject = 'Redefinição de senha SAGA'
       email_body = render_to_string('reset_email_password.html', {
-      'user': user,
+      'user': user.first_name,
       'domain': current_site,
       'uid': urlsafe_base64_encode(force_bytes(user.pk)),
       'token': generate_token.make_token(user)
