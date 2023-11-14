@@ -124,9 +124,9 @@
           if (elem.status === false) {
             return  'Professor: ' + prof_time ;
           } else if (elem.student_id == userId) {
-            return 'Agendado por: ' + user;
+            return 'Agend. por ' + user + "Prof." + prof_time;
           } else {
-            return 'Horário já agendado';
+            return 'Horário já agendado | Prof. ' + prof_time;
           }
         })(),
         type: elem.status === false ? 'holiday' : 'event',
