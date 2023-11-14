@@ -77,14 +77,25 @@
     let userId = `{{ user_id | safe }}`
     let tableData = `{{ time|safe }}`
     let professores = `{{ professores|safe }}`
-    console.log(professores)
+    console.log(typeof professores) 
 
 
     tableData = JSON.parse(tableData);
-
+    professores = JSON.parse(professores);
 
     $.each(tableData, function (index, elem) {
       var date = new Date(elem.date);
+      var prof_time;
+
+      $.each(professores, function (index, prof) {
+        console.log(tableData)
+        console.log(professores)
+         
+          if (prof.id == elem.professor_id){
+            console.log(prof.first_name) 
+            prof_time = prof.first_name
+          } 
+        });
 
       const monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
@@ -92,6 +103,7 @@
       ];
 
       var badge;
+
 
       if (elem.status === false) {
         badge = 'Agendar horário';
@@ -110,9 +122,9 @@
         badge: badge,
         description: (function () {
           if (elem.status === false) {
-            return ' ';
+            return  'Professor: ' + prof_time ;
           } else if (elem.student_id == userId) {
-            return 'Agendado por: ' + user + 'Professor: ' + elem.professor;
+            return 'Agendado por: ' + user;
           } else {
             return 'Horário já agendado';
           }

@@ -374,11 +374,13 @@ def check_availability(request, discipline_id, course_id):
     time_distinct = time.values('professor_id').distinct()
     ids_professores = set(professor_d['professor_id'] for professor_d in time_distinct) #monta conjunto de ids dos professores
     if professor == 1:
-      professores = list(User.objects.filter(id = request.user.id))
+      professores = list(User.objects.filter(id = request.user.id).values())
     else: 
-      professores = list(User.objects.filter(id__in=ids_professores))
+      professores = list(User.objects.filter(id__in=ids_professores).values())
     time = list(time)
     discipline = Discipline.objects.get(id=discipline_id)
+    print(time)
+    print(professores)
 
     if professor == 0:
       context = {
