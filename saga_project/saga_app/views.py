@@ -30,6 +30,7 @@ from django.utils.encoding import force_bytes
 from django.urls import reverse
 import json
 from django.contrib.auth.hashers import make_password
+from django.utils import timezone
     
 def home(request):
    return render(request, 'home.html')
@@ -370,7 +371,10 @@ def excluir_horario(availability:Availability):
 def check_availability(request, discipline_id, course_id):
 
     professor = int(request.POST.get('professor'))
-    time = Time.objects.filter(discipline_id=discipline_id).values()
+    if professor == 1:
+      time = Time.objects.filter(discipline_id=discipline_id).values()
+    else:
+      time = Time.objects.filter(discipline_id=discipline_id, date__gte=timezone.now().date()).values()
     time_distinct = time.values('professor_id').distinct()
     ids_professores = set(professor_d['professor_id'] for professor_d in time_distinct) #monta conjunto de ids dos professores
     if professor == 1:
