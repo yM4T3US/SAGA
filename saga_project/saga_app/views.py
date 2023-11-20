@@ -438,7 +438,7 @@ def save_scheduling(request, time_id, status, subject):
       time.student_id = request.user.id
       assunto = 'Novo agendamento no SAGA'
       #email professor
-      email_body = render_to_string('student-schedule.html', {
+      email_body = render_to_string('professor-schedule.html', {
       'name_student': name_student,
       'name_professor': name_professor,
       'date': data,
@@ -446,7 +446,7 @@ def save_scheduling(request, time_id, status, subject):
       'horario': horario})
       envia_email(assunto, email_body, email_professor)
       #email aluno
-      email_body = render_to_string('professor-schedule.html', {
+      email_body = render_to_string('student-schedule.html', {
       'name_student': name_student,
       'name_professor': name_professor,
       'date': data,
