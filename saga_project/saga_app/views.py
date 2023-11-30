@@ -31,6 +31,12 @@ from django.urls import reverse
 import json
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
+import logging
+
+#variaves de log
+login_register_logger = logging.getLogger('login_register_logger') 
+view_logger = logging.getLogger('view_logger')
+
     
 def home(request):
    return render(request, 'home.html')
@@ -49,6 +55,7 @@ def login(request):
       if user.is_email_verified:    # verifica se o email é verificado
         login_django(request, user)
         if request.user.is_authenticated:
+          login_register_logger.info(f"Usuario {request.user.email} realizou login no sistema.")
           return redirect('home')
       else:
         return HttpResponse("Email do usuario não verificado!")
@@ -57,6 +64,7 @@ def login(request):
       return render(request, 'login.html')
      
 def logout(request):
+  login_register_logger.info(f"Usuario {request.user.email} realizou logout no sistema.")
   logout_django(request)
   return render(request, 'login.html')
     
@@ -75,6 +83,7 @@ def sign_up(request):
         user.save()
         assign_role(user, "student")
         send_activation_email(user, request)
+        login_register_logger.info(f"Novo usuario {first_name} email: {email} foi cadastrado.")
         messages.success(request, "Usuário cadastrado com sucesso, Verifique seu email para validar o cadastro!")
         return render(request, "login.html")
       else:
@@ -629,6 +638,7 @@ def send_activation_email(user, request):  # envai email de ativação
   })
 
   envia_email(email_subject,email_body,[user.email])
+  login_register_logger.info(f"Enviado email de ativacao para {user.email} .")
 
 
 
@@ -644,9 +654,9 @@ def activate_user(request, uidb64, token):
     return redirect(reverse('login'))
   
   if user and generate_token.check_token(user, token):
-    print("Entrou no IF")
     user.is_email_verified = True
     user.save()
+    login_register_logger.info(f"Email do usuario {user.email} verificado com sucesso.")
     messages.add_message(request, messages.SUCCESS, 'Email verificado com sucesso! Você já pode fazer login.')   
     return redirect(reverse('login'))    
   else:
@@ -681,6 +691,7 @@ def send_reset_password(request): #envia redefinição
       })
 
       envia_email(email_subject,email_body,[user.email])
+      login_register_logger.info(f"Enviado redefinicaoo de senha para {user.email} com sucesso.")
       messages.success(request, "Confira em seu email as instruções para redefinição de senha")
       return render(request, "login.html")
 
@@ -713,6 +724,7 @@ def new_pass(request, id_user, token):     #redefine senha
       new_password  = make_password(request.POST.get('password'))
       user.password = new_password
       user.save()   
+      login_register_logger.info(f"Senha do usuario {user.email} foi alterada com sucesso.")
       messages.success(request, "Senha redefinida com sucesso!")
       return render(request, 'login.html')
     else:

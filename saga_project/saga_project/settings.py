@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 from django.contrib.messages import constants as messages
+import logging
+
 ##from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -157,5 +159,56 @@ MESSAGE_TAGS = {
         messages.ERROR: 'alert-danger',
 }
 
+LOGGING_DIR = os.path.join(BASE_DIR, 'logs')
+if not os.path.exists(LOGGING_DIR):
+    os.makedirs(LOGGING_DIR)
 
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGGING_DIR, 'django.log'),
+            'formatter': 'verbose',
+        },
+        'login_and_register': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGGING_DIR, 'login_register.log'),
+            'formatter': 'verbose',
+        },
+        'view_logger': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(LOGGING_DIR, 'viewlog.log'),
+            'formatter': 'verbose',
+        },
+
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'login_register_logger': {
+            'handlers': ['login_and_register'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+            'view_logger': {
+            'handlers': ['view_logger'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
