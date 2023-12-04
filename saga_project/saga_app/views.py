@@ -37,6 +37,7 @@ import logging
 login_register_logger = logging.getLogger('login_register_logger') 
 view_logger = logging.getLogger('view_logger')
 
+
     
 def home(request):
    return render(request, 'home.html')
@@ -163,8 +164,9 @@ def add_discipline(request):
       professor = request.user.first_name
       discipline = Discipline(name=discipline_name, access_key=access_key,semester=semester)
       discipline.save()
-      discipline.professor.add(professor)
+      discipline.professor.add(request.user.id)
       discipline.save()
+      view_logger.info(f"Disciplina cadastrada: {discipline_name} com sucesso, professor: {professor}.")
       courses_ids = request.POST.getlist('boxes')
       for i in range(len(courses_ids)):
         courses_ids[i] = Course.objects.get(id=courses_ids[i])
@@ -176,6 +178,7 @@ def add_discipline(request):
 @require_http_methods(["POST"]) 
 def discipline_delete(request, discipline_id):
     discipline = Discipline.objects.get(id=discipline_id)
+    view_logger.info(f"Disciplina deletada: {discipline.name} com sucesso, professor: {discipline.professor.name}.")
     discipline.delete()
     messages.success(request, 'Disciplina excluída com sucesso!')
     return redirect('professor-disciplines')
@@ -195,6 +198,7 @@ def discipline_update_post(request, discipline_id):
   discipline.access_key = request.POST.get('access-key')
   discipline.semester = request.POST.get('semester')
   discipline.courses.set(request.POST.getlist('boxes'))
+  view_logger.info(f"Disciplina alterada: {discipline.name} com sucesso, professor: {discipline.professor.name}.")
   discipline.save()
   messages.success(request, "Disciplina atualizada com sucesso!")
   return redirect('discipline-update-get', discipline_id=discipline_id)
@@ -206,6 +210,7 @@ def add_course(request):
     course_name = request.POST.get('course-name')
     course_image = request.FILES.get('course-image')
     course = Course(name=course_name)
+    view_logger.info(f"Curso adicionado: {course_name} com sucesso.")
     course.save()
     if course_image is not None:
       uploaded_file = SimpleUploadedFile(course_image.name, course_image.read(), content_type=course_image.content_type)
@@ -222,12 +227,14 @@ def course_update_get(request, course_id):
 def course_update_post(request, course_id):
   course = Course.objects.get(id=course_id)
   course.name = request.POST.get('course-name')
+  view_logger.info(f"Curso alterado com sucesso: {course.name}.")
   course.save()
   return redirect('professor-courses')
 
 @require_http_methods(["POST"]) 
 def course_delete(request, course_id):
   course = Course.objects.get(id=course_id)
+  view_logger.info(f"Curso deletado com sucesso: {course.name}.")
   course.delete()
   messages.success(request, 'Curso excluído com sucesso!')
   return redirect('professor-courses')
@@ -268,6 +275,7 @@ def profile(request):
     user_update.last_name = last_name
     user_update.phone = phone
     user_update.profile_image.save(profile_picture.name, uploaded_file, save=True)
+    view_logger.info(f"Usuario alterado com sucesso: {user_update.email}.")
     user_update.save()
     return redirect('profile')
 
@@ -340,6 +348,7 @@ def gerar_horario(availability:Availability,dia_semana,usuario_logado:User, disc
               datetime_ini += timedelta(minutes=availability.duration) #encrementa a hora 
               if datetime_ini <= datetime_fin:
                 new_time = Time(date=data_teste, initial_time=datetime_ini_ant.time(), final_time=datetime_ini.time(), status=False, subject="", professor=usuario_logado, discipline=disciplina)       #cria o registro     
+                view_logger.info(f"Horario registrado com sucesso: {data_teste} | {datetime_ini_ant.time()} | {datetime_ini.time()}.")
                 new_time.save()
       data_teste = data_teste + timedelta(days=1)
       retorno = True
@@ -355,6 +364,7 @@ def del_availability(request):
     availability = Availability.objects.get(id=id_availability)
     return_del_time = excluir_horario(availability)
     if return_del_time == True:
+      view_logger.info(f"Disponibilidade deletada com sucesso, professor: {availability.professor}.")
       availability.delete()
       return HttpResponse("Resitros de Disponibilidade excluido com sucesso")
     else:
@@ -465,6 +475,7 @@ def save_scheduling(request, time_id, status, subject):
       'date': data,
       'assunto_atendimento' : assunto_atendimento,
       'horario': horario})
+      view_logger.info(f"Novo agendamento registrado. Professor: {name_professor} , aluno: {name_student} data: {data}.")
       envia_email(assunto, email_body, email_student)   
 
     time.save()
